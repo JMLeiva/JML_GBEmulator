@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{d741a732-dec2-4c39-99a5-937d95e84d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Metadata">
+      <UniqueIdentifier>{1b7fd41b-8748-4df2-a8a3-8fa7174124fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Memory">
+      <UniqueIdentifier>{c8de3d4f-f306-49d6-8121-5d6a5da4b153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tools">
+      <UniqueIdentifier>{b1d3ae42-2aad-43e6-9d10-c817631c9476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\CPU">
+      <UniqueIdentifier>{c17331a2-cd3d-40bb-a423-d33f8e9e9c50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Cartidge">
+      <UniqueIdentifier>{33653da7-2679-409b-9afd-14d268c54d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Timer">
+      <UniqueIdentifier>{09114207-3a86-4db0-a55e-38959999048f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Graphics">
+      <UniqueIdentifier>{abeed44b-3008-4d39-9e95-3159c6bfd875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Sound">
+      <UniqueIdentifier>{769afbd5-29f0-49d3-b2ad-3d22feb9ec35}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Memory\MemoryBootstrap.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Memory\MemoryController.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Memory\MemoryElement.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Console.cpp">
+      <Filter>Source Files\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\CPU\CPU.cpp">
+      <Filter>Source Files\Core\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Cartidge\Cartidge.cpp">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Memory\WorkingRAM.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Timer\Timer.cpp">
+      <Filter>Source Files\Core\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Graphics\GPU.cpp">
+      <Filter>Source Files\Core\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Cartidge\CartidgeBuilder.cpp">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Sound\SoundEngine.cpp">
+      <Filter>Source Files\Core\Sound</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Core\Memory\MemoryBootstrap.h">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Memory\MemoryController.h">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Memory\MemoryElement.h">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Console.h">
+      <Filter>Source Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Metadata\Configuration.h">
+      <Filter>Source Files\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Metadata\DataTypes.h">
+      <Filter>Source Files\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\CPU\CPU.h">
+      <Filter>Source Files\Core\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruction.h">
+      <Filter>Source Files\Core\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Cartidge\Cartidge.h">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Memory\WorkingRAM.h">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Timer\Timer.h">
+      <Filter>Source Files\Core\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Graphics\GPU.h">
+      <Filter>Source Files\Core\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Cartidge\CartidgeBuilder.h">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Sound\SoundEngine.h">
+      <Filter>Source Files\Core\Sound</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

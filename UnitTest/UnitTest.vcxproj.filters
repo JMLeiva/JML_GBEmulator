@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{81000aee-2e13-427d-82a0-ed13b278d641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Memory">
+      <UniqueIdentifier>{107ba140-5a57-4a84-85a3-64afa96d9927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\CPU">
+      <UniqueIdentifier>{ff1273a4-9545-4824-bfe4-55dcbd62ab6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Cartidge">
+      <UniqueIdentifier>{117a08b5-576d-434c-9e55-6cf6a9eeef5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Graphics">
+      <UniqueIdentifier>{540100a0-0468-4906-89b5-7d274de1b992}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\MemoryElementTest.h">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CPU\CPUInstructions_UnitTest.cpp">
+      <Filter>Source Files\Core\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Memory\MemoryController_UnitTest.cpp">
+      <Filter>Source Files\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CPU\CPUFlags_UnitTest.cpp">
+      <Filter>Source Files\Core\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Cartidge\CartidgeBase_UnitTest.cpp">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Graphics\GPURegisters_UnitTest.cpp">
+      <Filter>Source Files\Core\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Graphics\GPUExcecution_UnitTest.cpp">
+      <Filter>Source Files\Core\Graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
