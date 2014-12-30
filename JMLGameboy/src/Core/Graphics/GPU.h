@@ -115,6 +115,9 @@ private:
 	bool pendingVBlankInterruption;
 	void OnLYCHanged();
 
+	//Helper Functions
+	void RenderLine();
+
 	//SFML
 	bool closed;
 #ifndef UNIT_TEST_ON

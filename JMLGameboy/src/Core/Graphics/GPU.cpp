@@ -276,73 +276,83 @@ void GPU::RunCycle(int cycleCount)
 #ifdef DEBUGGER_ON
 			WriteLineV("Entering Horizontal Blak GPU Mode");
 #endif
-			//Check if Background Is On
-			if(LCDC_BgOn())
-			{
-				// Check which tileset to use
-				BYTE* bgDisplay = LCDC_BgAreaFlag() ? bgDisplay2 : bgDisplay1;
-				WORD charOffset = LCDC_BgCharacterFlag() ? 0x0000 : 0x0800;
 
-				BYTE logicY = LY >> 3; //LY / 8; Map Logic Coordinate Id
-				BYTE characterYLine = LY & 0x07;//LY % 8; Tiles are 8x8, this is the y-line inside a tile
-
-				WORD tileId =  logicY * 32;
-
-				//TODO Use SCX & CSY
-				
-				//if(characterYLine == 0)
-				//{
-				//	printf("\n");
-				//}
-
-				for(BYTE x = 0; x < 32; x++)
-				{
-					BYTE tileAddress = bgDisplay[tileId+x] * 16;
-					BYTE lineAddress = tileAddress + characterYLine * 2;
-
-					
-
-					//if(characterYLine == 0)
-					//{
-					//	printf("[%03d]", tileId + x);
-					//
-					//}
-
-					
-				
-					BYTE line0 = characterRam[lineAddress + charOffset];
-					BYTE line1 = characterRam[lineAddress + 1 + charOffset];
-
-					// TEST IMPLEMENTATION
-					for(BYTE i = 0; i < 8; i++)
-					{
-						BYTE renderX = x * 8 + i;
-						BYTE renderY = LY;
-						
-						BYTE paletteIndex = (line1 >> (7 - i)) & 0x01;
-						paletteIndex <<= 1;
-						paletteIndex |= (line0 >> (7 - i)) & 0x01;
-
-						if(renderX >= WIDTH || renderY >= HEIGHT)
-						{
-							return;
-						}
-
-						//TODO USER PALETTE REGISTER
-
-						image.setPixel(renderX, renderY, PALETTE_COLORS[paletteIndex]);
-					}
-				}
-			}
-			else
-			{
-				//TODO Draw Blank Line
-			}
-			// TODO Render LINE
-			// TODO Do the job "async" outside this if
+			RenderLine();
 		}
 		break;
 	}
+}
+
+void GPU::RenderLine()
+{
+	//Check if Background Is On
+	if(LCDC_BgOn())
+	{
+		// Check which tileset to use
+		BYTE* bgDisplay = LCDC_BgAreaFlag() ? bgDisplay2 : bgDisplay1;
+		WORD charOffset = LCDC_BgCharacterFlag() ? 0x0000 : 0x0800;
+
+		BYTE logicY = LY >> 3; //LY / 8; Map Logic Coordinate Id
+		BYTE characterYLine = LY & 0x07;//LY % 8; Tiles are 8x8, this is the y-line inside a tile
+
+		WORD tileId =  logicY * 32;
+
+		//TODO Use SCX & CSY
+
+		//if(characterYLine == 0)
+		//{
+		//	printf("\n");
+		//}
+
+		for(BYTE x = 0; x < 32; x++)
+		{
+			BYTE tileAddress = bgDisplay[tileId + x] * 16;
+			BYTE lineAddress = tileAddress + characterYLine * 2;
+
+
+
+			//if(characterYLine == 0)
+			//{
+			//	printf("[%03d]", tileId + x);
+			//
+			//}
+
+
+
+			BYTE line0 = characterRam[lineAddress + charOffset];
+			BYTE line1 = characterRam[lineAddress + 1 + charOffset];
+
+			// TEST IMPLEMENTATION
+			for(BYTE i = 0; i < 8; i++)
+			{
+				BYTE renderX = x * 8 + i;
+				BYTE renderY = LY;
+
+				BYTE paletteIndex = (line1 >> (7 - i)) & 0x01;
+				paletteIndex <<= 1;
+				paletteIndex |= (line0 >> (7 - i)) & 0x01;
+
+				if(renderX >= WIDTH || renderY >= HEIGHT)
+				{
+					return;
+				}
+
+				//TODO USER PALETTE REGISTER
+
+				image.setPixel(renderX, renderY, PALETTE_COLORS[paletteIndex]);
+			}
+		}
+	}
+	else
+	{
+		// TEST IMPLEMENTATION
+		for(BYTE x = 0; x < 160; x++)
+		{
+			image.setPixel(x, LY, PALETTE_COLORS[0]);
+		}
+	}
+	// TODO Render LINE
+	// TODO Do the job "async" outside this if
 }
 
 void GPU::OnLYCHanged()

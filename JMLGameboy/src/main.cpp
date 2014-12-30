@@ -10,8 +10,8 @@
 
 #ifndef UNIT_TEST_ON
 
-//char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/Super Mario Land.gb";
-char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/game_1.gb";
+char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/Super Mario Land.gb";
+//char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/game_1.gb";
 
 int main(int argc, char** argv)
 {
