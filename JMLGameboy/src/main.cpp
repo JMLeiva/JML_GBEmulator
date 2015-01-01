@@ -10,14 +10,18 @@
 
 #ifndef UNIT_TEST_ON
 
-char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/Super Mario Land.gb";
-//char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/game_1.gb";
-
+//char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/Super Mario Land.gb";
+char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/game_2xy.gb";
 int main(int argc, char** argv)
 {
-
-
 	Cartidge* cartidge = CartidgeBuilder().Build(PATH);
+
+
+	if(cartidge == NULL)
+	{
+		throw std::runtime_error("Cartidge Error");
+	}
+
 	CPU* cpu = new CPU();
 	Timer* timer = new Timer(cpu);
 	GPU* gpu = new GPU(cpu);
@@ -38,8 +42,6 @@ int main(int argc, char** argv)
 		BYTE cyclesCount = cpu->RunCycle(ownerId);
 		timer->RunCycle(cyclesCount);
 		gpu->RunCycle(cyclesCount);
-
-		gpu->Update();
 
 		if(gpu->Closed())
 		{

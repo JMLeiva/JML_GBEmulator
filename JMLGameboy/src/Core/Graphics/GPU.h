@@ -48,8 +48,6 @@ public:
 	~GPU();
 
 	void Reset();
-
-	void Update();
 	bool Closed();
 
 	bool Write(const WORD &address, const BYTE &value);
@@ -63,6 +61,7 @@ private:
 #endif
 
 	unsigned int gpuCycles;
+	unsigned int eventCycles;
 
 	//Registers
 	BYTE LCDC;	// LCD Control Regiter
@@ -117,9 +116,11 @@ private:
 
 	//Helper Functions
 	void RenderLine();
+	void RenderScreen();
 
 	//SFML
 	bool closed;
+	void UpdateEvents();
 #ifndef UNIT_TEST_ON
 	sf::Image image;
 	sf::RenderWindow* window;

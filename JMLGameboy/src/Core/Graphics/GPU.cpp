@@ -2,6 +2,8 @@
 #include "../../Metadata/Configuration.h"
 #include "../../Tools/Console.h"
 
+#define RENDER_SCREEN 1
+
 #define CHARACTER_RAM_START_ADDRESS		0x8000
 #define CHARACTER_RAM_END_ADDRESS		0x9800 //Exclusive
 
@@ -35,9 +37,11 @@
 #define V_BLACK_LINE_START			144
 #define V_BLACK_LINE_END			154
 
-int SQUARE_SIZE = 4;
-int WIDTH = 160;
-int HEIGHT = 144;
+#define SFML_POLL_INTERVAL			100
+
+#define SCREEN_DOT_SIZE		4
+#define SCREEN_RES_WIDTH	160
+#define SCREEN_RES_HEIGHT	144
 
 GPU::GPU(CPU* cpu)
 {
@@ -52,16 +56,16 @@ GPU::GPU(CPU* cpu)
 	PALETTE_COLORS[3] = sf::Color(0, 0, 0);
 
 	//Initialize SFML Window
-	window = new sf::RenderWindow(sf::VideoMode(SQUARE_SIZE * WIDTH, SQUARE_SIZE * HEIGHT), "JML GBEmulator");
+	window = new sf::RenderWindow(sf::VideoMode(SCREEN_DOT_SIZE * SCREEN_RES_WIDTH, SCREEN_DOT_SIZE * SCREEN_RES_HEIGHT), "JML GBEmulator");
 
 	//Create texture
-	texture.create(WIDTH, HEIGHT);
+	texture.create(SCREEN_RES_WIDTH, SCREEN_RES_HEIGHT);
 
-	image.create(WIDTH, HEIGHT);
+	image.create(SCREEN_RES_WIDTH, SCREEN_RES_HEIGHT);
 
 	texture.update(image);
 	sprite.setTexture(texture);
-	sprite.scale((float)SQUARE_SIZE, (float)SQUARE_SIZE);
+	sprite.scale((float)SCREEN_DOT_SIZE, (float)SCREEN_DOT_SIZE);
 
 	closed = false;
 #endif
@@ -109,9 +113,11 @@ GPU::~GPU()
 
 }
 
-void GPU::Update()
+void GPU::UpdateEvents()
 {
 #ifndef UNIT_TEST_ON
+#if RENDER_SCREEN
+
 	while(window->pollEvent(event))
 	{
 		if(event.type == sf::Event::Closed)
@@ -119,25 +125,28 @@ void GPU::Update()
 			window->close();
 			closed = true;
 		}
-		else
-		{
-			//ProcessInput(event);
-		}
-
-		// clear the window with black color
-		window->clear(sf::Color::Black);
-
-		// draw everything here...
-		window->draw(sprite);
-
-		// end the current frame
-		window->display();
+		//else
+		//{
+		//ProcessInput(event);
+		//}
 	}
+
+	
+#endif
 #endif
 }
 
 void GPU::RunCycle(int cycleCount)
 {
+	// SFML Events 
+	eventCycles += cycleCount;
+	if(eventCycles >= SFML_POLL_INTERVAL)
+	{
+		eventCycles = 0;
+		UpdateEvents();
+	}
+
+	// GPU Emulation
 	if(!LCDC_DisplayOn())
 	{
 		return;
@@ -200,10 +209,7 @@ void GPU::RunCycle(int cycleCount)
 			pendingVBlankInterruption = false;
 
 			// Render Whole Imagen
-			texture.update(image);
-			sprite.setTexture(texture);
-			//printf("\n\n\n-------------------------------------------------------------------\n");
-		
+			RenderScreen();
 
 #ifdef DEBUGGER_ON
 			WriteLineV("Entering Vertical Blank GPU Mode");
@@ -292,35 +298,54 @@ void GPU::RenderLine()
 		BYTE* bgDisplay = LCDC_BgAreaFlag() ? bgDisplay2 : bgDisplay1;
 		WORD charOffset = LCDC_BgCharacterFlag() ? 0x0000 : 0x0800;
 
-		BYTE logicY = LY >> 3; //LY / 8; Map Logic Coordinate Id
+		BYTE baseLogicY = LY >> 3; //LY / 8; Map Logic Coordinate Id
 		BYTE characterYLine = LY & 0x07;//LY % 8; Tiles are 8x8, this is the y-line inside a tile
 
-		WORD tileId =  logicY * 32;
+		//SCX
+		BYTE scxLogicOffset = SCX >> 3; //SCX / 8
+		BYTE scxByteOffset = SCX & 0x07; //SCX % 8
 
-		//TODO Use SCX & CSY
+		//SCY
+		BYTE scyLogicOffset = SCY >> 3; //SCY / 8
+		BYTE scyLineOffset = SCY & 0x07; //SCY % 8
 
-		//if(characterYLine == 0)
-		//{
-		//	printf("\n");
-		//}
 
+		BYTE realLineOffset = characterYLine + scyLineOffset;
+		
+		BYTE realLogicY = ((baseLogicY + scyLogicOffset) & 0x1F) + (realLineOffset >> 3); // (baseLogicY + scyLogicOffset) % 32 + realLineOffset / 8
+		realLogicY &= 0x1F; // realLogic %= 32
+		WORD tileId =  realLogicY << 5; //Test With * 32
+		
+		realLineOffset &= 0x07;
+		
+		bool endLoop = false;
+		
 		for(BYTE x = 0; x < 32; x++)
 		{
-			BYTE tileAddress = bgDisplay[tileId + x] * 16;
-			BYTE lineAddress = tileAddress + characterYLine * 2;
+			BYTE logicX = (x + scxLogicOffset) & 0x1f; //(x + scxLogicOffset) % 32
 
-
-
-			//if(characterYLine == 0)
-			//{
-			//	printf("[%03d]", tileId + x);
-			//
-			//}
-
-
+			WORD tileAddress = bgDisplay[tileId + logicX] * 16;
+			WORD lineAddress = tileAddress + realLineOffset * 2;
 
 			BYTE line0 = characterRam[lineAddress + charOffset];
 			BYTE line1 = characterRam[lineAddress + 1 + charOffset];
+
+			if(scxByteOffset != 0)
+			{
+				//Get Next Line
+				BYTE nextLogicX = (logicX + 1) & 0x1f;
+				WORD nextTileAddress = bgDisplay[tileId + nextLogicX] * 16;
+				WORD nextLineAddress = nextTileAddress + realLineOffset * 2;
+
+				BYTE nextLine0 = characterRam[nextLineAddress + charOffset];
+				BYTE nextLine1 = characterRam[nextLineAddress + 1 + charOffset];
+
+				line0 <<= scxByteOffset;
+				line0 |= (nextLine0 >> (8 - scxByteOffset));
+
+				line1 <<= scxByteOffset;
+				line1 |= (nextLine1 >> (8 - scxByteOffset));
+			}
 
 			// TEST IMPLEMENTATION
 			for(BYTE i = 0; i < 8; i++)
@@ -332,14 +357,23 @@ void GPU::RenderLine()
 				paletteIndex <<= 1;
 				paletteIndex |= (line0 >> (7 - i)) & 0x01;
 
-				if(renderX >= WIDTH || renderY >= HEIGHT)
+				if(renderX >= SCREEN_RES_WIDTH || renderY >= SCREEN_RES_HEIGHT)
 				{
-					return;
+					endLoop = true;
+					break;
 				}
 
 				//TODO USER PALETTE REGISTER
+				BYTE colorIndex = (BGP >> (paletteIndex * 2)) & 0x03;
 
+#if RENDER_SCREEN
 				image.setPixel(renderX, renderY, PALETTE_COLORS[paletteIndex]);
+#endif
+			}
+
+			if(endLoop)
+			{
+				break;
 			}
 		}
 	}
@@ -348,11 +382,30 @@ void GPU::RenderLine()
 		// TEST IMPLEMENTATION
 		for(BYTE x = 0; x < 160; x++)
 		{
+#if RENDER_SCREEN
 			image.setPixel(x, LY, PALETTE_COLORS[0]);
+#endif
 		}
 	}
-	// TODO Render LINE
+
 	// TODO Do the job "async" outside this if
+}
+
+void GPU::RenderScreen()
+{
+#if RENDER_SCREEN
+	texture.update(image);
+	sprite.setTexture(texture);
+	
+	// clear the window with black color
+	//window->clear(sf::Color::Black);
+
+	// draw everything here...
+	window->draw(sprite);
+
+	// end the current frame
+	window->display();
+#endif
 }
 
 void GPU::OnLYCHanged()

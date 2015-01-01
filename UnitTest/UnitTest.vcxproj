@@ -100,16 +100,6 @@
     </ClCompile>
     <ClCompile Include="UnitTest.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\JMLGameboy\JMLGameboy.vcxproj">
-      <Project>{2cc7277d-95e6-41f8-91fa-6a9b7e4c2ba2}</Project>
-      <Private>false</Private>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

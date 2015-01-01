@@ -95,7 +95,7 @@ void MemoryController::WriteMemory(const WORD& address, const BYTE& value)
 	}
 
 	//Wrong Memory Read
-	//WriteLineC("Trying to Write ummaped address %d", address);
-	//throw std::runtime_error("Trying to Write ummaped address");
+	WriteLineC("Trying to Write ummaped address %d", address);
+	throw std::runtime_error("Trying to Write ummaped address");
 }
 

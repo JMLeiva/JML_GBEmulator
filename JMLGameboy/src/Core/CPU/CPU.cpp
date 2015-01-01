@@ -1,8 +1,11 @@
 #include "CPU.h"
 #include "../../Tools/Console.h"
 #include <stdexcept>
+//#include <Windows.h>
 
-#include <Windows.h>
+#ifdef DEBUGGER_ON
+#include <ctime>
+#endif
 
 #define IF_ADDRESS 0xFF0F
 #define IE_ADDRESS 0xFFFF
@@ -13,6 +16,10 @@ int cyclesCount = 0;
 
 int ownershipId[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 int ownerIndex = 0;
+
+clock_t lastTime = clock();
+clock_t freqTime = 0;
+int frequency = 0;
 #endif
 
 int CPU::TARGET_CPU_SPEED = 4194304; //4Mhz
@@ -75,8 +82,21 @@ BYTE CPU::RunCycle()
 #endif
 {
 
+
+
 #ifdef DEBUGGER_ON	
-	if (ownershipId[ownerIndex] != ownerId)
+	clock_t currentTime =  clock();
+	freqTime += currentTime - lastTime;
+	lastTime = currentTime;
+
+	if(freqTime >= CLOCKS_PER_SEC)
+	{
+		WriteLineI("CPU Freq: %d Hz", frequency);
+		frequency = 0;
+		freqTime = 0;
+	}
+
+	if(ownershipId[ownerIndex] != ownerId)
 	{
 		return 0;
 	}
@@ -87,6 +107,11 @@ BYTE CPU::RunCycle()
 	//FETCH
 	if(!haltMode)
 	{
+		if(PC == 0x71)
+		{
+			int a = 0;
+		}
+
 		opcode = MemoryController::Shared()->ReadMemory(PC);
 
 		//DECODE & EXCECUTE
@@ -104,6 +129,10 @@ BYTE CPU::RunCycle()
 		opMCycles = 4; //???
 	}
 
+
+#ifdef DEBUGGER_ON
+	frequency += opMCycles;
+#endif
 	//Check Interrupts
 	CheckInterrupt();
 
