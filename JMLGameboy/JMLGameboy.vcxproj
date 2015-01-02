@@ -25,7 +25,6 @@
     <ClCompile Include="src\Tools\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Instruction.h" />
     <ClInclude Include="src\Core\Cartidge\Cartidge.h" />
     <ClInclude Include="src\Core\Cartidge\CartidgeBuilder.h" />
     <ClInclude Include="src\Core\CPU\CPU.h" />

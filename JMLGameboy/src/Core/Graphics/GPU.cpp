@@ -1,3 +1,24 @@
+/*
+JML_GBEmulator
+Copyright (C) 2015 Leiva Juan Martin
+
+This file is part of JML_GBEmulator.
+
+JML_GBEmulator is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+JML_GBEmulator is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 #include "GPU.h"
 #include "../../Metadata/Configuration.h"
 #include "../../Tools/Console.h"
@@ -50,10 +71,10 @@ GPU::GPU(CPU* cpu)
 	Reset();
 
 #ifndef UNIT_TEST_ON
-	PALETTE_COLORS[0] = sf::Color(255, 255, 255);
-	PALETTE_COLORS[1] = sf::Color(192, 192, 192);
-	PALETTE_COLORS[2] = sf::Color(96, 96, 96);
-	PALETTE_COLORS[3] = sf::Color(0, 0, 0);
+	PALETTE_COLORS[0] = sf::Color(255,	255,	255);
+	PALETTE_COLORS[1] = sf::Color(192,	192,	192);
+	PALETTE_COLORS[2] = sf::Color(96,	96,		96);
+	PALETTE_COLORS[3] = sf::Color(0,	0,		0);
 
 	//Initialize SFML Window
 	window = new sf::RenderWindow(sf::VideoMode(SCREEN_DOT_SIZE * SCREEN_RES_WIDTH, SCREEN_DOT_SIZE * SCREEN_RES_HEIGHT), "JML GBEmulator");
@@ -291,6 +312,12 @@ void GPU::RunCycle(int cycleCount)
 
 void GPU::RenderLine()
 {
+	RenderBGLine();
+	RenderOBJLine();
+}
+
+void GPU::RenderBGLine()
+{
 	//Check if Background Is On
 	if(LCDC_BgOn())
 	{
@@ -388,7 +415,21 @@ void GPU::RenderLine()
 		}
 	}
 
+	//
+
 	// TODO Do the job "async" outside this if
+}
+
+void GPU::RenderOBJLine()
+{
+	bool smallObjects = LCDC_Obj8x8();
+
+	for(BYTE i = 0; i < 40; i++)
+	{
+		//GraphicObject object = oamObjects[i];
+
+	}
+
 }
 
 void GPU::RenderScreen()
