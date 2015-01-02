@@ -19,8 +19,6 @@ License
 JML_GBEmulator
 Copyright (C) 2015 Leiva Juan Martin
 
-This file is part of JML_GBEmulator.
-
 JML_GBEmulator is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
