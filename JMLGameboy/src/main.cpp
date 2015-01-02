@@ -32,7 +32,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef UNIT_TEST_ON
 
 //char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/Super Mario Land.gb";
-char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/game_2xy.gb";
+char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/game_3_OBJ.gb";
 int main(int argc, char** argv)
 {
 	Cartidge* cartidge = CartidgeBuilder().Build(PATH);

@@ -60,6 +60,12 @@ struct GraphicObject
 	BYTE LCD_X;
 	BYTE CHAR_CODE;
 	BYTE ATTR_FLAG;
+
+	inline bool Palette1()	{ return (ATTR_FLAG & 0x10) != 0; }
+	inline bool FlipX()		{ return (ATTR_FLAG & 0x20) != 0; }
+	inline bool FlipY()		{ return (ATTR_FLAG & 0x40) != 0; }
+	inline bool UnderBG()	{ return (ATTR_FLAG & 0x80) != 0; }
+
 };
 
 class GPU : public MemoryElement
@@ -111,7 +117,7 @@ private:
 	//LCDC DATA
 	inline bool LCDC_BgOn()				{ return (LCDC & 0x01) != 0x00; };
 	inline bool LCDC_ObjOn()			{ return (LCDC & 0x02) != 0x00; };
-	inline bool LCDC_Obj8x8()			{ return (LCDC & 0x04) != 0x00; };
+	inline bool LCDC_Obj8x16()			{ return (LCDC & 0x04) != 0x00; };
 	inline bool LCDC_BgAreaFlag()		{ return (LCDC & 0x08) != 0x00; };
 	inline bool LCDC_BgCharacterFlag()	{ return (LCDC & 0x10) != 0x00; };
 	inline bool LCDC_WindowingOn()		{ return (LCDC & 0x20) != 0x00; };
@@ -135,12 +141,14 @@ private:
 	bool pendingVBlankInterruption;
 	void OnLYCHanged();
 
-	//Helper Functions
+	//Helper 
+	BYTE bgLineMask[160];
+
 	void RenderLine();
 	void RenderBGLine();
 	void RenderOBJLine();
-
 	void RenderScreen();
+
 
 	//SFML
 	bool closed;

@@ -374,7 +374,6 @@ void GPU::RenderBGLine()
 				line1 |= (nextLine1 >> (8 - scxByteOffset));
 			}
 
-			// TEST IMPLEMENTATION
 			for(BYTE i = 0; i < 8; i++)
 			{
 				BYTE renderX = x * 8 + i;
@@ -389,6 +388,8 @@ void GPU::RenderBGLine()
 					endLoop = true;
 					break;
 				}
+
+				bgLineMask[renderX] = paletteIndex != 0;
 
 				//TODO USER PALETTE REGISTER
 				BYTE colorIndex = (BGP >> (paletteIndex * 2)) & 0x03;
@@ -406,12 +407,12 @@ void GPU::RenderBGLine()
 	}
 	else
 	{
-		// TEST IMPLEMENTATION
 		for(BYTE x = 0; x < 160; x++)
 		{
 #if RENDER_SCREEN
 			image.setPixel(x, LY, PALETTE_COLORS[0]);
 #endif
+			bgLineMask[x] = 0;
 		}
 	}
 
@@ -422,12 +423,83 @@ void GPU::RenderBGLine()
 
 void GPU::RenderOBJLine()
 {
-	bool smallObjects = LCDC_Obj8x8();
+	bool bigObjects = LCDC_Obj8x16();
+	BYTE checkYOffset = bigObjects ? 16 : 8;
 
 	for(BYTE i = 0; i < 40; i++)
 	{
-		//GraphicObject object = oamObjects[i];
+		GraphicObject object = oamObjects[i];
+		BYTE objectRealXPos = object.LCD_X - 8;
+		BYTE objectRealYPos = object.LCD_Y - 16;
+	
+		if(LY >= objectRealYPos && LY < objectRealYPos + checkYOffset)
+		{
+			//Draw
 
+			//Get Line
+
+			WORD characterAddress = object.CHAR_CODE * 16;
+			BYTE yCharLine = LY - objectRealYPos;
+
+			if(i == 2)
+			{
+				int a  = 0;
+			}
+
+			BYTE realYCharLine = object.FlipY() ? (bigObjects ? 15 - yCharLine : 7 - yCharLine) : yCharLine;
+
+			BYTE line0 = characterRam[characterAddress + realYCharLine * 2];
+			BYTE line1 = characterRam[characterAddress + realYCharLine * 2 + 1];
+
+			bool endLoop = false;
+			bool underBG = object.UnderBG();
+			bool flipX = object.FlipX();
+			
+
+			BYTE palette = object.Palette1() ? OBP1 : OBP0;
+
+
+			for(BYTE j = 0; j < 8; j++)
+			{
+				BYTE scanX = flipX ? (7 - j) : j;
+
+				BYTE renderX = object.LCD_X + j;
+				BYTE renderY = LY;
+
+				BYTE paletteIndex = (line1 >> (7 - scanX)) & 0x01;
+				paletteIndex <<= 1;
+				paletteIndex |= (line0 >> (7 - scanX)) & 0x01;
+
+				if(renderX >= SCREEN_RES_WIDTH || renderY >= SCREEN_RES_HEIGHT)
+				{
+					endLoop = true;
+					break;
+				}
+
+				//Get Palette Number
+				BYTE colorIndex = (palette >> (paletteIndex * 2)) & 0x03;
+
+				// "White" (0), for OBJECTS is transparent
+				if(colorIndex == 0)
+				{
+					continue;
+				}
+			
+				//checkPriority
+				if(underBG && bgLineMask[renderX] != 0)
+				{
+					continue;
+				}
+#if RENDER_SCREEN
+				image.setPixel(renderX, renderY, PALETTE_COLORS[colorIndex]);
+#endif	
+			}
+
+			if(endLoop)
+			{
+				break;
+			}
+		}
 	}
 
 }
@@ -653,10 +725,10 @@ bool GPU::Write(const WORD &address, const BYTE &value)
 			case 0x01:
 				oamObjects[objIndex].LCD_X = value;
 				break;
-			case 0x10:
+			case 0x02:
 				oamObjects[objIndex].CHAR_CODE = value;
 				break;
-			case 0x11:
+			case 0x03:
 				oamObjects[objIndex].ATTR_FLAG = value;
 				break;
 			}
