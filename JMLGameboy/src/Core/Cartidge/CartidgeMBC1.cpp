@@ -19,51 +19,41 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef JML_MOMORY_CONTROLLER
-#define JML_MEMORY_CONTROLLER
-
-#include "MemoryElement.h"
-#include "MemoryBootstrap.h"
+#include "CartidgeMBC1.h"
+#include "../../Tools/Console.h"
 #include "../../Metadata/Configuration.h"
 
-#define SPACE_SIZE 0xFFFF;
+#define RAMCS_GATE_START_ADDRESS	0x0000
+#define RAMCS_GATE_END_ADDRESS		0x2000
 
+#define ROM_BANK_SELECTION_START_ADDRESS	0x2000
+#define ROM_BANK_SELECTION_END_ADDRESS		0x4000
 
-class MemoryController
+//TODO
+//#define 
+
+CartidgeMBC1::CartidgeMBC1() : Cartidge()
 {
-public:
 	
-	//Singleton
-	static MemoryController* Shared();
-	//!Singleton
+}
 
+CartidgeMBC1::~CartidgeMBC1()
+{
+	
+}
 
-	~MemoryController();
+bool CartidgeMBC1::Write(const WORD &address, const BYTE &value)
+{
+	if(address >= 0x8000)
+	{
+		return false;
+	}
 
-	void AppendMemoryElement(MemoryElement* memoryElement);
-	void Clear();
+	if(address >= ROM_BANK_SELECTION_START_ADDRESS && address < ROM_BANK_SELECTION_END_ADDRESS)
+	{
+		currentBank = value;
+		return true;
+	}
 
-	BYTE ReadMemory(const WORD& address);
-	void WriteMemory(const WORD& address, const BYTE& value);
-
-#ifdef UNIT_TEST_ON
-public:
-#else
-private:
-#endif
-	//Singleton
-	static MemoryController* _instance;
-	//!Singleton
-
-	MemoryElement** memoryElements;
-	int memoryElementsCount;
-	int memoryElementsIncreaseCount;
-
-	bool boostrapEnabled;
-	MemoryBootstrap memoryBootstrap;
-
-private:
-	MemoryController();
-};
-
-#endif JML_MEMORY_ADDRESS
+	return false;
+}

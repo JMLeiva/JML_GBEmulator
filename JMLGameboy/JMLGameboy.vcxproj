@@ -13,8 +13,10 @@
   <ItemGroup>
     <ClCompile Include="src\Core\Cartidge\Cartidge.cpp" />
     <ClCompile Include="src\Core\Cartidge\CartidgeBuilder.cpp" />
+    <ClCompile Include="src\Core\Cartidge\CartidgeMBC1.cpp" />
     <ClCompile Include="src\Core\CPU\CPU.cpp" />
     <ClCompile Include="src\Core\Graphics\GPU.cpp" />
+    <ClCompile Include="src\Core\Input\Joypad.cpp" />
     <ClCompile Include="src\Core\Memory\MemoryBootstrap.cpp" />
     <ClCompile Include="src\Core\Memory\MemoryController.cpp" />
     <ClCompile Include="src\Core\Memory\MemoryElement.cpp" />
@@ -27,8 +29,10 @@
   <ItemGroup>
     <ClInclude Include="src\Core\Cartidge\Cartidge.h" />
     <ClInclude Include="src\Core\Cartidge\CartidgeBuilder.h" />
+    <ClInclude Include="src\Core\Cartidge\CartidgeMBC1.h" />
     <ClInclude Include="src\Core\CPU\CPU.h" />
     <ClInclude Include="src\Core\Graphics\GPU.h" />
+    <ClInclude Include="src\Core\Input\Joypad.h" />
     <ClInclude Include="src\Core\Memory\MemoryBootstrap.h" />
     <ClInclude Include="src\Core\Memory\MemoryController.h" />
     <ClInclude Include="src\Core\Memory\MemoryElement.h" />

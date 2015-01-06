@@ -66,9 +66,18 @@ CPU::CPU()
 void CPU::Reset()
 {
 #ifndef UNIT_TEST_ON
-	PC = 0x0150;
-#else
+#if BOOTSTRAP_ENABLED
 	PC = 0x0000;
+#else
+	PC = 0x0100;
+	AF.w = 0x01B0;
+	BC.w = 0x0013;
+	DE.w = 0x00D8;
+	HL.w = 0x014D;
+	IF = 0xE1;
+#endif
+#else
+	PC == 0x0000;
 #endif
 	//IE = ???
 	SP.w = 0xFFFE;
@@ -81,7 +90,7 @@ void CPU::Reset()
 
 CPU::~CPU()
 {
-
+	WriteLineE("CPU Destructor");
 }
 
 
@@ -128,11 +137,12 @@ BYTE CPU::RunCycle()
 	//FETCH
 	if(!haltMode)
 	{
-		if(PC == 0x71)
+		if(PC == 0x02A5)
 		{
 			int a = 0;
 		}
 
+		//WriteLineE("%#04x", PC);
 		opcode = MemoryController::Shared()->ReadMemory(PC);
 
 		//DECODE & EXCECUTE
@@ -156,6 +166,8 @@ BYTE CPU::RunCycle()
 #endif
 	//Check Interrupts
 	CheckInterrupt();
+
+	
 
 	return opMCycles;
 }
@@ -193,7 +205,7 @@ bool CPU::Read(const WORD &address, BYTE &out)
 		out = IE;
 		return true;
 	}
-	else if(address > STACK_RAM_START_ADDRESS)
+	else if(address >= STACK_RAM_START_ADDRESS)
 	{
 		out = stackRam[address - STACK_RAM_START_ADDRESS];
 		return true;
@@ -680,8 +692,8 @@ unsigned char CPU::LD_A_$nn()
 {
 	//11 111 010
 	// Loads into register A the contents of the internal RAM or register specified by 16-Bit immediate openrand nn
-	WORD n1 = MemoryController::Shared()->ReadMemory(PC + 1);
-	WORD n2 = MemoryController::Shared()->ReadMemory(PC + 2);
+	WORD n1 = MemoryController::Shared()->ReadMemory(PC + 2);
+	WORD n2 = MemoryController::Shared()->ReadMemory(PC + 1);
 
 	WORD address = (n1 << 8) | n2;
 
@@ -698,8 +710,8 @@ unsigned char CPU::LD_$nn_A()
 	//11 101 010
 	// Loads the contents of register A in the internal RAM, port register, or mode register specified by 16-Bits
 	// immediate operand nn
-	WORD n1 = MemoryController::Shared()->ReadMemory(PC + 1);
-	WORD n2 = MemoryController::Shared()->ReadMemory(PC + 2);
+	WORD n1 = MemoryController::Shared()->ReadMemory(PC + 2);
+	WORD n2 = MemoryController::Shared()->ReadMemory(PC + 1);
 
 	WORD address = (n1 << 8) | n2;
 
@@ -1503,6 +1515,10 @@ unsigned char CPU::DEC_r()
 		ResetH();
 	}
 
+	if(r == 1)
+	{
+		int b = 0;
+	}
 	r -= 1;
 
 	// Set Z
@@ -2372,7 +2388,7 @@ unsigned char CPU::BIT_b_r()
 		ResetZ();
 	}
 
-	ResetH();
+	SetH();
 	ResetN();
 
 	PC += 1;
@@ -2855,8 +2871,8 @@ unsigned char CPU::RST_t()
 	// Bacause all addressess are held in the page 0 memory, 0x00 is loaded in the higher-oreder byte of
 	// the PC, and the value of P is loaded in the lower-order byte.
 
-	MemoryController::Shared()->WriteMemory(SP.w - 1, ((PC + 3) >> 8));
-	MemoryController::Shared()->WriteMemory(SP.w - 2, ((PC + 3) & 0xFF));
+	MemoryController::Shared()->WriteMemory(SP.w - 1, ((PC + 1) >> 8));
+	MemoryController::Shared()->WriteMemory(SP.w - 2, ((PC + 1) & 0xFF));
 
 	BYTE t = (opcode >> 3) & 0x07;
 	

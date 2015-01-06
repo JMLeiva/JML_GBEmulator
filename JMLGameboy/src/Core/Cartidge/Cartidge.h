@@ -108,7 +108,7 @@ public:
 	bool Write(const WORD &address, const BYTE &value);
 	bool Read(const WORD &address, BYTE &out);
 
-private:
+protected:
 	void Initialize();
 
 

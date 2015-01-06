@@ -37,4 +37,6 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #define CURRENT_LOG_LEVEL	LOG_LEVEL_INFO
 #endif
 
+#define BOOTSTRAP_ENABLED 0 
+
 #endif //JML_CONFIGURATION

@@ -19,22 +19,22 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef JML_WORKING_RAM
-#define JML_WORKING_RAM
+#ifndef JML_CARTIDGEMBC1
+#define JML_CARTIDGEMBC1
 
-#include "../Memory/MemoryElement.h"
+#include "Cartidge.h"
 
-class WorkingRam : public MemoryElement
+
+class CartidgeMBC1 : public Cartidge
 {
+	friend class CartidgeBuilder;
+
 public:
-	WorkingRam();
-	~WorkingRam();
+	CartidgeMBC1();
+	~CartidgeMBC1();
 
 	bool Write(const WORD &address, const BYTE &value);
-	bool Read(const WORD &address, BYTE &out);
-
-private:
-	BYTE ram[0x2000]; //8K
 };
 
-#endif // JML_WORKING_RAM
+
+#endif //JML_CARTIDGEMBC1

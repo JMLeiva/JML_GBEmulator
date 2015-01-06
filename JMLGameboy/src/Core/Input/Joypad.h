@@ -18,52 +18,49 @@ You should have received a copy of the GNU General Public License
 along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+#ifndef JML_JOYPAD
+#define JML_JOYPAD
 
-#ifndef JML_MOMORY_CONTROLLER
-#define JML_MEMORY_CONTROLLER
-
-#include "MemoryElement.h"
-#include "MemoryBootstrap.h"
+#include "../Memory/MemoryElement.h"
 #include "../../Metadata/Configuration.h"
 
-#define SPACE_SIZE 0xFFFF;
-
-
-class MemoryController
-{
-public:
-	
-	//Singleton
-	static MemoryController* Shared();
-	//!Singleton
-
-
-	~MemoryController();
-
-	void AppendMemoryElement(MemoryElement* memoryElement);
-	void Clear();
-
-	BYTE ReadMemory(const WORD& address);
-	void WriteMemory(const WORD& address, const BYTE& value);
-
-#ifdef UNIT_TEST_ON
-public:
-#else
-private:
+#ifndef UNIT_TEST_ON
+#include <SFML\Window\Event.hpp>
 #endif
-	//Singleton
-	static MemoryController* _instance;
-	//!Singleton
 
-	MemoryElement** memoryElements;
-	int memoryElementsCount;
-	int memoryElementsIncreaseCount;
-
-	bool boostrapEnabled;
-	MemoryBootstrap memoryBootstrap;
-
-private:
-	MemoryController();
+enum P_MASK
+{
+	P_MASK_10 = 0x01,
+	P_MASK_11 = 0x02,
+	P_MASK_12 = 0x04,
+	P_MASK_13 = 0x08,
+	P_MASK_14 = 0x10,
+	P_MASK_15 = 0x20,
 };
 
-#endif JML_MEMORY_ADDRESS
+enum ColumnEnum
+{
+	LEFT_COLUMN = 0x10,
+	RIGHT_COLUMN = 0x20,
+};
+
+class Joypad : public MemoryElement
+{
+public:
+	Joypad();
+	~Joypad();
+
+	bool Write(const WORD &address, const BYTE &value);
+	bool Read(const WORD &address, BYTE &out);
+
+	void HandleEvent(sf::Event event);
+
+private:
+	BYTE leftInput;
+	BYTE rightInput;
+
+	BYTE column;
+	
+};
+
+#endif // JML_JOYPAD

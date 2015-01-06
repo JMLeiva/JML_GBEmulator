@@ -25,11 +25,11 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #define STARTING_CARTIDGE_ADDRESS	0x0000
-#define ENDING_CARTIDGE_ADDRESS		0x7FFF
+#define ENDING_CARTIDGE_ADDRESS		0x8000
 
 Cartidge::Cartidge()
 {
-	currentBank = 0;
+	currentBank = 1;
 }
 
 Cartidge::~Cartidge()
@@ -39,27 +39,12 @@ Cartidge::~Cartidge()
 
 bool Cartidge::Write(const WORD &address, const BYTE &value)
 {
-	if(address < STARTING_CARTIDGE_ADDRESS)
-	{
-		return false;
-	}
-
-	if(address > ENDING_CARTIDGE_ADDRESS)
-	{
-		return false;
-	}
-
 	return false;
 }
 
 bool Cartidge::Read(const WORD &address, BYTE &out)
 {
-	if(address < STARTING_CARTIDGE_ADDRESS)
-	{
-		return false;
-	}
-
-	if(address > ENDING_CARTIDGE_ADDRESS)
+	if(address >= ENDING_CARTIDGE_ADDRESS)
 	{
 		return false;
 	}
@@ -70,7 +55,10 @@ bool Cartidge::Read(const WORD &address, BYTE &out)
 	}
 	else
 	{
-		out = romBanks[currentBank + 1][address];
+		out = romBanks[currentBank][address - ROM_SIZE];
+		//WriteLineE("1: %d", out);
+		//WriteLineE("2: %d", romBanks[currentBank + 2][address - ROM_SIZE]);
+		//WriteLineE("3: %d", romBanks[currentBank + 3][address - ROM_SIZE]);
 	}
 
 	return true;
@@ -79,15 +67,17 @@ bool Cartidge::Read(const WORD &address, BYTE &out)
 
 void Cartidge::Initialize()
 {
+	//Todo Check Read Size
+
 	//Load Initial Banks
 
 	//Bank 0
 	fread(romBanks[0], sizeof(BYTE), ROM_SIZE, file);
-	BYTE* bTest = romBanks[0];
-
-	WriteLineE("TEST");
-	//Bank 1 (First Mapped??)
-	// TODO
-
-	//RAM ??
+	
+	//otherBanks
+	for(unsigned int i = 1; i < romBanks.size(); i++)
+	{
+		fread(romBanks[i], sizeof(BYTE), ROM_SIZE, file);
+	}
+	
 }

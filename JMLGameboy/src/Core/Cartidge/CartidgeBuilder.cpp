@@ -20,7 +20,9 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "CartidgeBuilder.h"
+#include "CartidgeMBC1.h"
 #include "../../Tools/Console.h"
+
 
 char NINTENDO_LOGO[] ={0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B,
 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
@@ -193,7 +195,7 @@ bool CartidgeBuilder::ReadCartidgeMetadata(const char* header)
 Cartidge* CartidgeBuilder::GetCorrectCartidge(const char* header)
 {
 	// Temp, subclass in the future if necesary
-	Cartidge* cartidge = new Cartidge();
+	Cartidge* cartidge = NULL;
 
 	//Cartidge Type
 	BYTE cartidgeTypeCode = header[0x0147];
@@ -213,6 +215,7 @@ Cartidge* CartidgeBuilder::GetCorrectCartidge(const char* header)
 		WriteLineI("CartidgeType: HuC3");
 		break;
 	case CartidgeType::MBC1:
+		cartidge = new CartidgeMBC1();
 		cartidge->cartidgeType = CartidgeType::MBC1;
 		WriteLineI("CartidgeType: MBC1");
 		break;
@@ -301,6 +304,7 @@ Cartidge* CartidgeBuilder::GetCorrectCartidge(const char* header)
 		WriteLineI("CartidgeType: POCKET_CAMERA");
 		break;
 	case CartidgeType::ROM_ONLY:
+		cartidge = new Cartidge();
 		cartidge->cartidgeType = CartidgeType::ROM_ONLY;
 		WriteLineI("CartidgeType: ROM_ONLY");
 		break;

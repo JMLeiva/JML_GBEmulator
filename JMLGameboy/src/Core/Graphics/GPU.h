@@ -75,7 +75,6 @@ public:
 	~GPU();
 
 	void Reset();
-	bool Closed();
 
 	bool Write(const WORD &address, const BYTE &value);
 	bool Read(const WORD &address, BYTE &out);
@@ -83,12 +82,15 @@ public:
 	void RunCycle(int cycleCount);
 
 #ifndef UNIT_TEST_ON
+	sf::RenderWindow* GetWindow(){return window; };
+#endif
+
+#ifndef UNIT_TEST_ON
 private:
 	sf::Color PALETTE_COLORS[4];
 #endif
 
 	unsigned int gpuCycles;
-	unsigned int eventCycles;
 
 	//Registers
 	BYTE LCDC;	// LCD Control Regiter
@@ -151,12 +153,10 @@ private:
 
 
 	//SFML
-	bool closed;
-	void UpdateEvents();
+
 #ifndef UNIT_TEST_ON
-	sf::Image image;
 	sf::RenderWindow* window;
-	sf::Event event;
+	sf::Image image;
 	sf::Texture texture;
 	sf::Sprite sprite;
 #endif

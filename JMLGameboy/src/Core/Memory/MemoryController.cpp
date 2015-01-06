@@ -24,6 +24,8 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdexcept>
 
 
+#define BOOTSTRA_DISABLE_ADDRESS 0xFF50
+
 int MEMORY_ELEMENTS_INCREASE_STEP = 8;
 
 
@@ -44,6 +46,13 @@ MemoryController::MemoryController()
 	memoryElementsCount = 0;
 	memoryElementsIncreaseCount = 1;
 	memoryElements = new MemoryElement*[MEMORY_ELEMENTS_INCREASE_STEP];
+
+#if BOOTSTRAP_ENABLED
+	boostrapEnabled = true;
+#else
+	boostrapEnabled = false;
+#endif
+	
 }
 
 MemoryController::~MemoryController()
@@ -86,6 +95,14 @@ BYTE MemoryController::ReadMemory(const WORD& address)
 {
 	BYTE readByte = 0x00;
 
+	if(boostrapEnabled)
+	{
+		if(memoryBootstrap.Read(address, readByte) )
+		{
+			return readByte;
+		}
+	}
+
 	for (int i = 0; i < memoryElementsCount; i++)
 	{
 		if (memoryElements[i]->Read(address, readByte))
@@ -95,16 +112,17 @@ BYTE MemoryController::ReadMemory(const WORD& address)
 	}
 
 	//Wrong Memory Read
-	WriteLineC("Trying to Read ummaped address %d", address);
-	throw std::runtime_error("Trying to Read ummaped address");
+	WriteLineW("Trying to Read ummaped address %d", address);
+	//throw std::runtime_error("Trying to Read ummaped address");
 	return 0x00;
 }
 
 void MemoryController::WriteMemory(const WORD& address, const BYTE& value)
 {
-	if(address == 0x99cf)
+	if(boostrapEnabled && address == BOOTSTRA_DISABLE_ADDRESS && value > 0)
 	{
-		int a = 0;
+		boostrapEnabled = false;
+		return;
 	}
 
 	for (int i = 0; i < memoryElementsCount; i++)
@@ -116,7 +134,7 @@ void MemoryController::WriteMemory(const WORD& address, const BYTE& value)
 	}
 
 	//Wrong Memory Read
-	WriteLineC("Trying to Write ummaped address %d", address);
-	throw std::runtime_error("Trying to Write ummaped address");
+	WriteLineW("Trying to Write ummaped address %d", address);
+	//throw std::runtime_error("Trying to Write ummaped address");
 }
 

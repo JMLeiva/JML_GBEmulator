@@ -36,6 +36,9 @@
     <Filter Include="Source Files\Core\Sound">
       <UniqueIdentifier>{769afbd5-29f0-49d3-b2ad-3d22feb9ec35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core\Input">
+      <UniqueIdentifier>{108c0c70-36c6-46ae-a8db-dbebcdb2f895}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -73,6 +76,12 @@
     </ClCompile>
     <ClCompile Include="src\Core\Sound\SoundEngine.cpp">
       <Filter>Source Files\Core\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Cartidge\CartidgeMBC1.cpp">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Input\Joypad.cpp">
+      <Filter>Source Files\Core\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +123,12 @@
     </ClInclude>
     <ClInclude Include="src\Core\Sound\SoundEngine.h">
       <Filter>Source Files\Core\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Cartidge\CartidgeMBC1.h">
+      <Filter>Source Files\Core\Cartidge</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Input\Joypad.h">
+      <Filter>Source Files\Core\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

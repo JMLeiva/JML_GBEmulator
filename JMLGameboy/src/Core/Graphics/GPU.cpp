@@ -58,8 +58,6 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #define V_BLACK_LINE_START			144
 #define V_BLACK_LINE_END			154
 
-#define SFML_POLL_INTERVAL			100
-
 #define SCREEN_DOT_SIZE		4
 #define SCREEN_RES_WIDTH	160
 #define SCREEN_RES_HEIGHT	144
@@ -87,16 +85,18 @@ GPU::GPU(CPU* cpu)
 	texture.update(image);
 	sprite.setTexture(texture);
 	sprite.scale((float)SCREEN_DOT_SIZE, (float)SCREEN_DOT_SIZE);
-
-	closed = false;
 #endif
 }
 
 void GPU::Reset()
 {
 	gpuCycles = 0;
+#if BOOTSTRAP_ENABLED
+	LCDC = 0x00;//0x91;
+#else
 	LCDC = 0x91;
-	STAT = 0x02; //Search OAM
+#endif
+	STAT = 0x85;
 	SCX = 0x00;
 	SCY = 0x00;
 	LYC = 0x00;
@@ -131,42 +131,11 @@ void GPU::Reset()
 
 GPU::~GPU()
 {
-
-}
-
-void GPU::UpdateEvents()
-{
-#ifndef UNIT_TEST_ON
-#if RENDER_SCREEN
-
-	while(window->pollEvent(event))
-	{
-		if(event.type == sf::Event::Closed)
-		{
-			window->close();
-			closed = true;
-		}
-		//else
-		//{
-		//ProcessInput(event);
-		//}
-	}
-
-	
-#endif
-#endif
+	WriteLineC("WTF?");
 }
 
 void GPU::RunCycle(int cycleCount)
 {
-	// SFML Events 
-	eventCycles += cycleCount;
-	if(eventCycles >= SFML_POLL_INTERVAL)
-	{
-		eventCycles = 0;
-		UpdateEvents();
-	}
-
 	// GPU Emulation
 	if(!LCDC_DisplayOn())
 	{
@@ -415,10 +384,6 @@ void GPU::RenderBGLine()
 			bgLineMask[x] = 0;
 		}
 	}
-
-	//
-
-	// TODO Do the job "async" outside this if
 }
 
 void GPU::RenderOBJLine()
@@ -540,11 +505,6 @@ void GPU::OnLYCHanged()
 	}
 }
 
-bool GPU::Closed()
-{
-	return closed;
-}
-
 bool GPU::Write(const WORD &address, const BYTE &value)
 {
 	if(address == LCDC_ADDRESS)
@@ -647,7 +607,7 @@ bool GPU::Write(const WORD &address, const BYTE &value)
 	{
 		//DMA Transfer
 		BYTE transferAddress = address;
-		for(BYTE oamId = 0; oamId < 160; oamId++)
+		for(BYTE oamId = 0; oamId < 40; oamId++)
 		{
 			oamObjects[oamId].LCD_Y		= MemoryController::Shared()->ReadMemory(transferAddress);
 			oamObjects[oamId].LCD_X		= MemoryController::Shared()->ReadMemory(transferAddress+1);

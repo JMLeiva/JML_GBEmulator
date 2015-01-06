@@ -28,11 +28,41 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include "Core\Timer\Timer.h"
 #include "Core\Memory\WorkingRAM.h"
 #include "Core\Sound\SoundEngine.h"
+#include "Core\Input\Joypad.h"
 
 #ifndef UNIT_TEST_ON
 
-//char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/Super Mario Land.gb";
-char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/game_3_OBJ.gb";
+char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/Super Mario Land.gb";
+//char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/game_4_OBJ16.gb";
+
+#define SFML_POLL_INTERVAL			100
+
+unsigned int eventCycles = 0;
+bool closed = false;
+
+#ifndef UNIT_TEST_ON
+sf::RenderWindow* window;
+sf::Event event;
+#endif
+
+void UpdateEvents(Joypad* joypad)
+{
+#ifndef UNIT_TEST_ON
+	while(window->pollEvent(event))
+	{
+		if(event.type == sf::Event::Closed)
+		{
+			window->close();
+			closed = true;
+		}
+		else
+		{
+			joypad->HandleEvent(event);
+		}
+	}
+#endif
+}
+
 int main(int argc, char** argv)
 {
 	Cartidge* cartidge = CartidgeBuilder().Build(PATH);
@@ -46,8 +76,10 @@ int main(int argc, char** argv)
 	CPU* cpu = new CPU();
 	Timer* timer = new Timer(cpu);
 	GPU* gpu = new GPU(cpu);
+	window = gpu->GetWindow();
 	SoundEngine* soundEngine = new SoundEngine();
 	WorkingRam* workingRam = new WorkingRam();
+	Joypad* joypad = new Joypad();
 
 	MemoryController::Shared()->AppendMemoryElement(cartidge);
 	MemoryController::Shared()->AppendMemoryElement(cpu);
@@ -55,6 +87,7 @@ int main(int argc, char** argv)
 	MemoryController::Shared()->AppendMemoryElement(gpu);
 	MemoryController::Shared()->AppendMemoryElement(workingRam);
 	MemoryController::Shared()->AppendMemoryElement(soundEngine);
+	MemoryController::Shared()->AppendMemoryElement(joypad);
 
 	int ownerId = cpu->GetOwnershipId();
 
@@ -64,7 +97,15 @@ int main(int argc, char** argv)
 		timer->RunCycle(cyclesCount);
 		gpu->RunCycle(cyclesCount);
 
-		if(gpu->Closed())
+		// SFML Events 
+		eventCycles += cyclesCount;
+		if(eventCycles >= SFML_POLL_INTERVAL)
+		{
+			eventCycles = 0;
+			UpdateEvents(joypad);
+		}
+
+		if(closed)
 		{
 			break;
 		}
@@ -76,6 +117,7 @@ int main(int argc, char** argv)
 	delete timer;
 	delete cpu;
 	delete cartidge;
+	delete joypad;
 
 	return 0;
 }
