@@ -112,7 +112,7 @@ BYTE MemoryController::ReadMemory(const WORD& address)
 	}
 
 	//Wrong Memory Read
-	WriteLineW("Trying to Read ummaped address %d", address);
+	//WriteLineW("Trying to Read ummaped address %d", address);
 	//throw std::runtime_error("Trying to Read ummaped address");
 	return 0x00;
 }
@@ -134,7 +134,7 @@ void MemoryController::WriteMemory(const WORD& address, const BYTE& value)
 	}
 
 	//Wrong Memory Read
-	WriteLineW("Trying to Write ummaped address %d", address);
+	//WriteLineW("Trying to Write ummaped address %d", address);
 	//throw std::runtime_error("Trying to Write ummaped address");
 }
 

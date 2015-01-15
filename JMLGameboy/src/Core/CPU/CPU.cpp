@@ -137,10 +137,13 @@ BYTE CPU::RunCycle()
 	//FETCH
 	if(!haltMode)
 	{
-		if(PC == 0x02A5)
+		if(emulationCycleCount == 299462)
 		{
-			int a = 0;
+			int b = 0;
 		}
+
+		
+		//WriteLineE("0x%04x", PC);
 
 		//WriteLineE("%#04x", PC);
 		opcode = MemoryController::Shared()->ReadMemory(PC);

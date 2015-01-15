@@ -38,6 +38,14 @@ enum P_MASK
 	P_MASK_15 = 0x20,
 };
 
+enum P_NOT_MASK
+{
+	P_NOT_MASK_10 = 0x0E,
+	P_NOT_MASK_11 = 0x0D,
+	P_NOT_MASK_12 = 0x0B,
+	P_NOT_MASK_13 = 0x07,
+};
+
 enum ColumnEnum
 {
 	LEFT_COLUMN = 0x10,

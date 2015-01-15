@@ -100,29 +100,29 @@ void Joypad::HandleEvent(sf::Event event)
 		switch(event.key.code)
 		{
 		case sf::Keyboard::Right:
-			leftInput &= ~P_MASK_10;
+			leftInput &= P_NOT_MASK_10;
 			break;
 		case sf::Keyboard::Left:
-			leftInput &= ~P_MASK_11;
+			leftInput &= P_NOT_MASK_11;
 			break;
 		case sf::Keyboard::Up:
-			leftInput &= ~P_MASK_12;
+			leftInput &= P_NOT_MASK_12;
 			break;
 		case sf::Keyboard::Down:
-			leftInput &= ~P_MASK_13;
+			leftInput &= P_NOT_MASK_13;
 			break;
 
 		case sf::Keyboard::Z:
-			rightInput &= ~P_MASK_10;
+			rightInput &= P_NOT_MASK_10;
 			break;
 		case sf::Keyboard::X:
-			rightInput &= ~P_MASK_11;
+			rightInput &= P_NOT_MASK_11;
 			break;
 		case sf::Keyboard::Space:
-			rightInput &= ~P_MASK_12;
+			rightInput &= P_NOT_MASK_12;
 			break;
 		case sf::Keyboard::Return:
-			rightInput &= ~P_MASK_13;
+			rightInput &= P_NOT_MASK_13;
 			break;
 		}
 	}

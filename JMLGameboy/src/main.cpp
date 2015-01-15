@@ -32,8 +32,8 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef UNIT_TEST_ON
 
-char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/Super Mario Land.gb";
-//char* PATH = "C:/Users/Juan/Documents/JML_GBEmulator/ROMs/game_4_OBJ16.gb";
+char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/Super Mario Land.gb";
+//char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/game_4_OBJ16.gb";
 
 #define SFML_POLL_INTERVAL			100
 

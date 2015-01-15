@@ -290,9 +290,16 @@ void GPU::RenderBGLine()
 	//Check if Background Is On
 	if(LCDC_BgOn())
 	{
+		if(LY == 0)
+		{
+			int a = 0;
+		}
+
+		bool lowMap = LCDC_BgCharacterFlag();
+
 		// Check which tileset to use
 		BYTE* bgDisplay = LCDC_BgAreaFlag() ? bgDisplay2 : bgDisplay1;
-		WORD charOffset = LCDC_BgCharacterFlag() ? 0x0000 : 0x0800;
+		WORD charOffset = lowMap ? 0x0000 : 0x1000;
 
 		BYTE baseLogicY = LY >> 3; //LY / 8; Map Logic Coordinate Id
 		BYTE characterYLine = LY & 0x07;//LY % 8; Tiles are 8x8, this is the y-line inside a tile
@@ -320,21 +327,37 @@ void GPU::RenderBGLine()
 		{
 			BYTE logicX = (x + scxLogicOffset) & 0x1f; //(x + scxLogicOffset) % 32
 
-			WORD tileAddress = bgDisplay[tileId + logicX] * 16;
-			WORD lineAddress = tileAddress + realLineOffset * 2;
+			BYTE line0 = 0;
+			BYTE line1 = 0;
 
-			BYTE line0 = characterRam[lineAddress + charOffset];
-			BYTE line1 = characterRam[lineAddress + 1 + charOffset];
+			if(scxByteOffset == 0)
+			{
+				BYTE characterIdTemp = bgDisplay[tileId + logicX];
+				short characterId = characterIdTemp;
 
-			if(scxByteOffset != 0)
+				if(!lowMap && characterId >= 0x80)
+				{
+					characterId = (char)characterId;
+				}
+
+				int tileAddress = characterId * 16;
+				WORD lineAddress = tileAddress + realLineOffset * 2 + charOffset;
+
+
+				line0 = characterRam[lineAddress];
+				line1 = characterRam[lineAddress + 1];
+			}
+			else
 			{
 				//Get Next Line
 				BYTE nextLogicX = (logicX + 1) & 0x1f;
-				WORD nextTileAddress = bgDisplay[tileId + nextLogicX] * 16;
-				WORD nextLineAddress = nextTileAddress + realLineOffset * 2;
+				BYTE characterId = bgDisplay[tileId + logicX];
 
-				BYTE nextLine0 = characterRam[nextLineAddress + charOffset];
-				BYTE nextLine1 = characterRam[nextLineAddress + 1 + charOffset];
+				WORD tileAddress = characterId * 16;
+				WORD lineAddress = tileAddress + realLineOffset * 2 + +charOffset;
+
+				BYTE nextLine0 = characterRam[lineAddress];
+				BYTE nextLine1 = characterRam[lineAddress + 1];
 
 				line0 <<= scxByteOffset;
 				line0 |= (nextLine0 >> (8 - scxByteOffset));
@@ -606,7 +629,9 @@ bool GPU::Write(const WORD &address, const BYTE &value)
 	else if(address == DMA_ADDRESS)
 	{
 		//DMA Transfer
-		BYTE transferAddress = address;
+		WORD transferAddress = value;
+		transferAddress <<= 8; // Ej, C0 -> C000
+
 		for(BYTE oamId = 0; oamId < 40; oamId++)
 		{
 			oamObjects[oamId].LCD_Y		= MemoryController::Shared()->ReadMemory(transferAddress);
