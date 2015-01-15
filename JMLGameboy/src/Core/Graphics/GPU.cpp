@@ -327,37 +327,41 @@ void GPU::RenderBGLine()
 		{
 			BYTE logicX = (x + scxLogicOffset) & 0x1f; //(x + scxLogicOffset) % 32
 
-			BYTE line0 = 0;
-			BYTE line1 = 0;
+			//WORD tileAddress = bgDisplay[tileId + logicX] * 16;
+			//WORD lineAddress = tileAddress + realLineOffset * 2;
 
-			if(scxByteOffset == 0)
+			BYTE characterIdTemp = bgDisplay[tileId + logicX];
+			short characterId = characterIdTemp;
+
+			if(!lowMap && characterId >= 0x80)
 			{
-				BYTE characterIdTemp = bgDisplay[tileId + logicX];
-				short characterId = characterIdTemp;
-
-				if(!lowMap && characterId >= 0x80)
-				{
-					characterId = (char)characterId;
-				}
-
-				int tileAddress = characterId * 16;
-				WORD lineAddress = tileAddress + realLineOffset * 2 + charOffset;
-
-
-				line0 = characterRam[lineAddress];
-				line1 = characterRam[lineAddress + 1];
+				characterId = (char)characterId;
 			}
-			else
+
+			int tileAddress = characterId * 16;
+			WORD lineAddress = tileAddress + realLineOffset * 2 + charOffset;
+
+			BYTE line0 = characterRam[lineAddress];
+			BYTE line1 = characterRam[lineAddress + 1];
+
+			if(scxByteOffset != 0)
 			{
 				//Get Next Line
 				BYTE nextLogicX = (logicX + 1) & 0x1f;
-				BYTE characterId = bgDisplay[tileId + logicX];
+				
+				BYTE nextCharacterIdTemp = bgDisplay[tileId + nextLogicX];
+				short nextCharacterId = nextCharacterIdTemp;
 
-				WORD tileAddress = characterId * 16;
-				WORD lineAddress = tileAddress + realLineOffset * 2 + +charOffset;
+				if(!lowMap && nextCharacterId >= 0x80)
+				{
+					nextCharacterId = (char)nextCharacterId;
+				}
 
-				BYTE nextLine0 = characterRam[lineAddress];
-				BYTE nextLine1 = characterRam[lineAddress + 1];
+				int nextTileAddress = nextCharacterId * 16;
+				WORD nextLineAddress = nextTileAddress + realLineOffset * 2 + charOffset;
+
+				BYTE nextLine0 = characterRam[nextLineAddress];
+				BYTE nextLine1 = characterRam[nextLineAddress + 1];
 
 				line0 <<= scxByteOffset;
 				line0 |= (nextLine0 >> (8 - scxByteOffset));
