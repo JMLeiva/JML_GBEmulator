@@ -22,9 +22,11 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include "Joypad.h"
 #include "../../Tools/Console.h"
 
-#ifndef UNIT_TEST_ON
+//#ifndef UNIT_TEST_ON
 #include <SFML\Window\Keyboard.hpp>
-#endif
+//#endif
+
+
 
 #define P1_ADDRESS 0xFF00
 
@@ -74,17 +76,17 @@ bool Joypad::Read(const WORD &address, BYTE &out)
 {
 	if(address == P1_ADDRESS)
 	{
-		switch(column)
+		if( (column & ColumnEnum::LEFT_COLUMN) == 0)
 		{
-		case ColumnEnum::LEFT_COLUMN:
-			out = leftInput;
-			break;
-		case ColumnEnum::RIGHT_COLUMN:
-			out = rightInput;
-			break;
-		default:
+			out = leftInput | column;
+		}
+		else if( (column & ColumnEnum::RIGHT_COLUMN) == 0)
+		{
+			out = rightInput | column;
+		}
+		else
+		{
 			out = 0x0F;
-			break;
 		}
 
 		return true;
@@ -93,68 +95,111 @@ bool Joypad::Read(const WORD &address, BYTE &out)
 	return false;
 }
 
+#define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
+#define BYTETOBINARY(byte)  \
+  (byte & 0x80 ? 1 : 0), \
+  (byte & 0x40 ? 1 : 0), \
+  (byte & 0x20 ? 1 : 0), \
+  (byte & 0x10 ? 1 : 0), \
+  (byte & 0x08 ? 1 : 0), \
+  (byte & 0x04 ? 1 : 0), \
+  (byte & 0x02 ? 1 : 0), \
+  (byte & 0x01 ? 1 : 0) 
+
 void Joypad::HandleEvent(sf::Event event)
 {
+	//leftInput = 
+
 	if(event.type == sf::Event::KeyPressed)
 	{
-		switch(event.key.code)
+		if(event.key.code == sf::Keyboard::Right)
 		{
-		case sf::Keyboard::Right:
 			leftInput &= P_NOT_MASK_10;
-			break;
-		case sf::Keyboard::Left:
-			leftInput &= P_NOT_MASK_11;
-			break;
-		case sf::Keyboard::Up:
-			leftInput &= P_NOT_MASK_12;
-			break;
-		case sf::Keyboard::Down:
-			leftInput &= P_NOT_MASK_13;
-			break;
-
-		case sf::Keyboard::Z:
-			rightInput &= P_NOT_MASK_10;
-			break;
-		case sf::Keyboard::X:
-			rightInput &= P_NOT_MASK_11;
-			break;
-		case sf::Keyboard::Space:
-			rightInput &= P_NOT_MASK_12;
-			break;
-		case sf::Keyboard::Return:
-			rightInput &= P_NOT_MASK_13;
-			break;
 		}
+		
+		if(event.key.code == sf::Keyboard::Left)
+		{
+			leftInput &= P_NOT_MASK_11;
+		}
+
+		if(event.key.code == sf::Keyboard::Up)
+		{
+			leftInput &= P_NOT_MASK_12;
+		}
+
+		if(event.key.code == sf::Keyboard::Down)
+		{
+			leftInput &= P_NOT_MASK_13;
+		}
+			
+
+		if(event.key.code == sf::Keyboard::Z)
+		{
+			rightInput &= P_NOT_MASK_10;
+		}
+		
+		if(event.key.code == sf::Keyboard::X)
+		{
+			rightInput &= P_NOT_MASK_11;
+		}
+
+		if(event.key.code == sf::Keyboard::Space)
+		{
+			rightInput &= P_NOT_MASK_12;
+		}
+
+		if(event.key.code == sf::Keyboard::Return)
+		{
+			rightInput &= P_NOT_MASK_13;
+		}
+
+		WriteLineC("Left "BYTETOBINARYPATTERN, BYTETOBINARY(leftInput));
+		WriteLineC("Right "BYTETOBINARYPATTERN, BYTETOBINARY(rightInput));
 	}
 	else if(event.type == sf::Event::KeyReleased)
 	{
-		switch(event.key.code)
+		if(event.key.code == sf::Keyboard::Right)
 		{
-		case sf::Keyboard::Right:
 			leftInput |= P_MASK_10;
-			break;
-		case sf::Keyboard::Left:
-			leftInput |= P_MASK_11;
-			break;
-		case sf::Keyboard::Up:
-			leftInput |= P_MASK_12;
-			break;
-		case sf::Keyboard::Down:
-			leftInput |= P_MASK_13;
-			break;
-
-		case sf::Keyboard::Z:
-			rightInput |= P_MASK_10;
-			break;
-		case sf::Keyboard::X:
-			rightInput |= P_MASK_11;
-			break;
-		case sf::Keyboard::Space:
-			rightInput |= P_MASK_12;
-			break;
-		case sf::Keyboard::Return:
-			rightInput |= P_MASK_13;
-			break;
 		}
+
+		if(event.key.code == sf::Keyboard::Left)
+		{
+			leftInput |= P_MASK_11;
+		}
+
+		if(event.key.code == sf::Keyboard::Up)
+		{
+			leftInput |= P_MASK_12;
+		}
+
+		if(event.key.code == sf::Keyboard::Down)
+		{
+			leftInput |= P_MASK_13;
+		}
+
+
+		if(event.key.code == sf::Keyboard::Z)
+		{
+			rightInput |= P_MASK_10;
+		}
+
+		if(event.key.code == sf::Keyboard::X)
+		{
+			rightInput |= P_MASK_11;
+		}
+
+		if(event.key.code == sf::Keyboard::Space)
+		{
+			rightInput |= P_MASK_12;
+		}
+
+		if(event.key.code == sf::Keyboard::Return)
+		{
+			rightInput |= P_MASK_13;
+		}
+
+		WriteLineC("Left "BYTETOBINARYPATTERN, BYTETOBINARY(leftInput));
+		WriteLineC("Right "BYTETOBINARYPATTERN, BYTETOBINARY(rightInput));
 	}
 }

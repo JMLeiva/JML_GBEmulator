@@ -829,15 +829,16 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_LD_A_$nn)
 	BYTE n1 = 0x12;
 	BYTE n2 = 0x23;
 
-	WORD address = n1;
+	WORD address = n2;
 	address <<= 8;
-	address |= n2;
+	address |= n1;
 
 	memoryFull.Write(0x00, 0xFA); //LD A (nn)
 	memoryFull.Write(0x01, n1);
 	memoryFull.Write(0x02, n2);
 	memoryFull.Write(address, 0xEF);
 
+	
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.AF.h == 0xEF);
 
@@ -860,9 +861,9 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_LD_$nn_A)
 	BYTE n1 = 0x4E;
 	BYTE n2 = 0xFF;
 
-	WORD address = n1;
+	WORD address = n2;
 	address <<= 8;
-	address |= n2;
+	address |= n1;
 
 	cpu.AF.h = 0xAA;
 
@@ -1238,7 +1239,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_POP_qq)
 }
 
 
-BOOST_AUTO_TEST_CASE(CPUInstruction_LDHL_PS_e)
+BOOST_AUTO_TEST_CASE(CPUInstruction_LDHL_SP_e)
 {
 	MemoryElementSmall memorySmall;
 	
@@ -1247,45 +1248,45 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_LDHL_PS_e)
 	CPU cpu;
 	int cpuOwnershipId = cpu.GetOwnershipId();
 
-	cpu.SP.w = 0x0111;
+	cpu.SP.w = 0x0FFF;
 	memorySmall.Write(0x00, 0xF8); //DLHL SP e
-	memorySmall.Write(0x01, 0x54);
+	memorySmall.Write(0x01, 0x54); // 0x54
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.HL.w == 0x0165);
+	BOOST_CHECK(cpu.HL.w == 0x1053);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
 	cpu.SP.w = 0x0008;
 	memorySmall.Write(0x02, 0xF8); //DLHL SP e
-	memorySmall.Write(0x03, 0x0F);
+	memorySmall.Write(0x03, 0x0F); // 0x0F
 
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.HL.w == 0x0017);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetH() == 0);
 	BOOST_CHECK(cpu.GetCY() == 0);
 	
 	cpu.SP.w = 0x0081;
 	memorySmall.Write(0x04, 0xF8); //DLHL SP e
-	memorySmall.Write(0x05, 0xF0);
+	memorySmall.Write(0x05, 0xF0); // - 0x10
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.HL.w == 0x0171);
+	BOOST_CHECK(cpu.HL.w == 0x071);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
 	BOOST_CHECK(cpu.GetH() == 0);
-	BOOST_CHECK(cpu.GetCY() == 1);
+	BOOST_CHECK(cpu.GetCY() == 0);
 
-	cpu.SP.w = 0x0089;
+	cpu.SP.w = 0x0000;
 	memorySmall.Write(0x06, 0xF8); //DLHL SP e
-	memorySmall.Write(0x07, 0xF8);
+	memorySmall.Write(0x07, 0x9C); // - 0x64
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.HL.w == 0x0181);
+	BOOST_CHECK(cpu.HL.w == 0xFF9C);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
 	BOOST_CHECK(cpu.GetH() == 1);
@@ -3605,26 +3606,28 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_ADD_SP_e)
 	CPU cpu;
 	int cpuOwnershipId = cpu.GetOwnershipId();
 
-	cpu.SP.w = 0x00FF;
+	cpu.SP.w = 0x0FFF;
 
-	memorySmall.Write(0x0000, 0xE8); //ADD SP e
-	memorySmall.Write(0x0001, 0x23);
-	memorySmall.Write(0x0002, 0xE8); //ADD SP e
-	memorySmall.Write(0x0003, 0xFF);
-	memorySmall.Write(0x0004, 0xE8); //ADD SP e
-	memorySmall.Write(0x0005, 0x01);
-	memorySmall.Write(0x0006, 0xE8); //ADD SP e
-	memorySmall.Write(0x0007, 0xFF);
+	memorySmall.Write(0x0000, 0xE8);	//ADD SP e
+	memorySmall.Write(0x0001, 0x23);	// 0x23
+	memorySmall.Write(0x0002, 0xE8);	//ADD SP e
+	memorySmall.Write(0x0003, 0xFF);	// -0x01
+	memorySmall.Write(0x0004, 0xE8);	//ADD SP e
+	memorySmall.Write(0x0005, 0x01);	// 0x01
+	memorySmall.Write(0x0006, 0xE8);	//ADD SP e
+	memorySmall.Write(0x0007, 0x80);	// -
+	memorySmall.Write(0x0008, 0xE8);	//ADD SP e
+	memorySmall.Write(0x0009, 0x80);	// -0x80
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.SP.w == 0x0122);
+	BOOST_CHECK(cpu.SP.w == 0x1022);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.SP.w == 0x0221);
+	BOOST_CHECK(cpu.SP.w == 0x1021);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
 	BOOST_CHECK(cpu.GetH() == 0);
@@ -3633,23 +3636,29 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_ADD_SP_e)
 	cpu.SetZ();
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.SP.w == 0x0222);
+	BOOST_CHECK(cpu.SP.w == 0x1022);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
 	BOOST_CHECK(cpu.GetH() == 0);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
-	cpu.SP.w = 0xFF01;
-
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.SP.w == 0x0000);
+	BOOST_CHECK(cpu.SP.w == 0x0FA2);
+	BOOST_CHECK(cpu.GetZ() == 0);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 0);
+
+	cpu.SP.w = 0x0000;
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.SP.w == 0xFF80);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
 	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 1);
 
 	//CHECK PC state
-	BOOST_CHECK(cpu.PC == 8);
+	BOOST_CHECK(cpu.PC == 0x0A);
 
 	MemoryController::Shared()->Clear();
 }
@@ -5634,20 +5643,43 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_BIT_r)
 
 	memorySmall.Write(0x0000, 0xCB); //BIT 0 B
 	memorySmall.Write(0x0001, 0x40);
-	memorySmall.Write(0x0002, 0xCB); //BIT 1 C
-	memorySmall.Write(0x0003, 0x49);
-	memorySmall.Write(0x0004, 0xCB); //BIT 2 D
-	memorySmall.Write(0x0005, 0x52);
-	memorySmall.Write(0x0006, 0xCB); //BIT 3 E
-	memorySmall.Write(0x0007, 0x5B);
-	memorySmall.Write(0x0008, 0xCB); //BIT 4 H
-	memorySmall.Write(0x0009, 0x64);
-	memorySmall.Write(0x000A, 0xCB); //BIT 5 L
-	memorySmall.Write(0x000B, 0x6D);
-	memorySmall.Write(0x000C, 0xCB); //BIT 6 A
-	memorySmall.Write(0x000D, 0x77);
-	memorySmall.Write(0x000E, 0xCB); //BIT 7 B
-	memorySmall.Write(0x000F, 0x78);
+	memorySmall.Write(0x0002, 0xCB); //BIT 1 B
+	memorySmall.Write(0x0003, 0x48);
+
+	memorySmall.Write(0x0004, 0xCB); //BIT 1 C
+	memorySmall.Write(0x0005, 0x49);
+	memorySmall.Write(0x0006, 0xCB); //BIT 2 C
+	memorySmall.Write(0x0007, 0x51);
+
+	memorySmall.Write(0x0008, 0xCB); //BIT 2 D
+	memorySmall.Write(0x0009, 0x52);
+	memorySmall.Write(0x000A, 0xCB); //BIT 3 D
+	memorySmall.Write(0x000B, 0x5A);
+
+	memorySmall.Write(0x000C, 0xCB); //BIT 3 E
+	memorySmall.Write(0x000D, 0x5B);
+	memorySmall.Write(0x000E, 0xCB); //BIT 4 E
+	memorySmall.Write(0x000F, 0x63);
+
+	memorySmall.Write(0x0010, 0xCB); //BIT 4 H
+	memorySmall.Write(0x0011, 0x64);
+	memorySmall.Write(0x0012, 0xCB); //BIT 5 H
+	memorySmall.Write(0x0013, 0x6C);
+
+	memorySmall.Write(0x0014, 0xCB); //BIT 5 L
+	memorySmall.Write(0x0015, 0x6D);
+	memorySmall.Write(0x0016, 0xCB); //BIT 6 L
+	memorySmall.Write(0x0017, 0x75);
+
+	memorySmall.Write(0x0018, 0xCB); //BIT 6 A
+	memorySmall.Write(0x0019, 0x77);
+	memorySmall.Write(0x001A, 0xCB); //BIT 7 A
+	memorySmall.Write(0x001B, 0x7F);
+
+	memorySmall.Write(0x001C, 0xCB); //BIT 7 B
+	memorySmall.Write(0x001D, 0x78);
+	memorySmall.Write(0x001E, 0xCB); //BIT 2 B
+	memorySmall.Write(0x001F, 0x50);
 
 	cpu.ResetZ();
 	cpu.ResetN();
@@ -5655,66 +5687,146 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_BIT_r)
 	cpu.ResetCY();
 
 
-	cpu.BC.h = 0x18;
-	cpu.BC.l = 0xFD;
-	cpu.DE.h = 0x22;
-	cpu.DE.l = 0x39;
-	cpu.HL.h = 0x8F;
-	cpu.HL.l = 0xF0;
-	cpu.AF.h = 0x00;
+	cpu.BC.h = 0x81;
+	cpu.BC.l = 0x40;
+	cpu.DE.h = 0x20;
+	cpu.DE.l = 0x10;
+	cpu.HL.h = 0x08;
+	cpu.HL.l = 0x04;
+	cpu.AF.h = 0x02;
 
+	//BIT 0 B
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 1);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
+	//BIT 1 B
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
+	//BIT 1 C
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 1);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 0);
+
+	//BIT 2 C
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
+	//BIT 2 D
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 1);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 0);
+
+	//BIT 3 D
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 0);
+
+	//BIT 3 E
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 1);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 0);
+
+	//BIT 4 E
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 0);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 0);
 
 	cpu.SetCY();
 
+	//BIT 4 H
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 1);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 1);
+
+	//BIT 5 H
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 0);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 1);
 
+	//BIT 5 L
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 1);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 1);
 
+	//BIT 6 L
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 0);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 1);
+
+	//BIT 6 A
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 1);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 1);
 
+	//BIT 7 A
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 0);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 1);
+
+	//BIT 7 B
+	cpu.ResetH();
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.GetZ() == 1);
 	BOOST_CHECK(cpu.GetN() == 0);
-	BOOST_CHECK(cpu.GetH() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
+	BOOST_CHECK(cpu.GetCY() == 1);
+
+	//BIT 1 B
+	cpu.ResetH();
+	cpu.RunCycle(cpuOwnershipId);
+	BOOST_CHECK(cpu.GetZ() == 0);
+	BOOST_CHECK(cpu.GetN() == 0);
+	BOOST_CHECK(cpu.GetH() == 1);
 	BOOST_CHECK(cpu.GetCY() == 1);
 
 	//CHECK PC state
-	BOOST_CHECK(cpu.PC == 16);
+	BOOST_CHECK(cpu.PC == 32);
 
 	MemoryController::Shared()->Clear();
 }
@@ -6716,7 +6828,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xFD, valL);
 	BOOST_CHECK(cpu.PC == 0x0008);
 	BOOST_CHECK(cpu.SP.w == 0x00FD);
-	BOOST_CHECK(valL == 0x03);
+	BOOST_CHECK(valL == 0x01);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6724,7 +6836,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xFB, valL);
 	BOOST_CHECK(cpu.PC == 0x0010);
 	BOOST_CHECK(cpu.SP.w == 0x00FB);
-	BOOST_CHECK(valL == 0x0B);
+	BOOST_CHECK(valL == 0x09);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6732,7 +6844,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xF9, valL);
 	BOOST_CHECK(cpu.PC == 0x0018);
 	BOOST_CHECK(cpu.SP.w == 0x00F9);
-	BOOST_CHECK(valL == 0x13);
+	BOOST_CHECK(valL == 0x11);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6740,7 +6852,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xF7, valL);
 	BOOST_CHECK(cpu.PC == 0x0020);
 	BOOST_CHECK(cpu.SP.w == 0x00F7);
-	BOOST_CHECK(valL == 0x1B);
+	BOOST_CHECK(valL == 0x19);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6748,7 +6860,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xF5, valL);
 	BOOST_CHECK(cpu.PC == 0x0028);
 	BOOST_CHECK(cpu.SP.w == 0x00F5);
-	BOOST_CHECK(valL == 0x23);
+	BOOST_CHECK(valL == 0x21);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6756,7 +6868,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xF3, valL);
 	BOOST_CHECK(cpu.PC == 0x0030);
 	BOOST_CHECK(cpu.SP.w == 0x00F3);
-	BOOST_CHECK(valL == 0x2B);
+	BOOST_CHECK(valL == 0x29);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6764,7 +6876,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xF1, valL);
 	BOOST_CHECK(cpu.PC == 0x0038);
 	BOOST_CHECK(cpu.SP.w == 0x00F1);
-	BOOST_CHECK(valL == 0x33);
+	BOOST_CHECK(valL == 0x31);
 	BOOST_CHECK(valH == 0x00);
 
 	cpu.RunCycle(cpuOwnershipId);
@@ -6772,7 +6884,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_RST_t)
 	memorySmall.Read(0xEF, valL);
 	BOOST_CHECK(cpu.PC == 0x0000);
 	BOOST_CHECK(cpu.SP.w == 0x00EF);
-	BOOST_CHECK(valL == 0x3B);
+	BOOST_CHECK(valL == 0x39);
 	BOOST_CHECK(valH == 0x00);
 
 	MemoryController::Shared()->Clear();
@@ -6828,8 +6940,8 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_CPL)
 	cpu.AF.h = 0x35;
 	cpu.RunCycle(cpuOwnershipId);
 	BOOST_CHECK(cpu.AF.h == 0xCA);
-	BOOST_CHECK(cpu.GetN() == true);
-	BOOST_CHECK(cpu.GetH() == true);
+	BOOST_CHECK(cpu.GetN() != 0);
+	BOOST_CHECK(cpu.GetH() != 0);
 
 
 	cpu.AF.h = 0xDD;
@@ -6893,16 +7005,16 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_CCF)
 
 	cpu.ResetCY();
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == true);
+	BOOST_CHECK(cpu.GetCY() != 0);
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == false);
+	BOOST_CHECK(cpu.GetCY() == 0);
 	
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == true);
+	BOOST_CHECK(cpu.GetCY() != 0);
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == false);
+	BOOST_CHECK(cpu.GetCY() == 0);
 
 	//CHECK PC state
 	BOOST_CHECK(cpu.PC == 4);
@@ -6927,17 +7039,17 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_SCF)
 
 	cpu.ResetCY();
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == true);
+	BOOST_CHECK(cpu.GetCY() != 0);
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == true);
+	BOOST_CHECK(cpu.GetCY() != 0);
 
 	cpu.ResetCY();
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == true);
+	BOOST_CHECK(cpu.GetCY() != 0);
 
 	cpu.RunCycle(cpuOwnershipId);
-	BOOST_CHECK(cpu.GetCY() == true);
+	BOOST_CHECK(cpu.GetCY() != 0);
 
 	//CHECK PC state
 	BOOST_CHECK(cpu.PC == 4);
@@ -7027,7 +7139,7 @@ BOOST_AUTO_TEST_CASE(CPUInstruction_STOP)
 	BOOST_CHECK(cpu.stopMode == true);
 
 	//CHECK PC state
-	BOOST_CHECK(cpu.PC == 1);
+	BOOST_CHECK(cpu.PC == 0x02);
 
 	MemoryController::Shared()->Clear();
 }

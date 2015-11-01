@@ -23,7 +23,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #define JML_CONFIGURATION
 
 #define DEBUGGER_ON
-//#define UNIT_TEST_ON
+#define UNIT_TEST_ON
 
 #define LOG_LEVEL_CRITICAL	0
 #define LOG_LEVEL_ERROR		1
@@ -34,7 +34,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef UNIT_TEST_ON
 #define CURRENT_LOG_LEVEL	LOG_LEVEL_WARNING
 #else
-#define CURRENT_LOG_LEVEL	LOG_LEVEL_INFO
+#define CURRENT_LOG_LEVEL	LOG_LEVEL_WARNING
 #endif
 
 #define BOOTSTRAP_ENABLED 0 

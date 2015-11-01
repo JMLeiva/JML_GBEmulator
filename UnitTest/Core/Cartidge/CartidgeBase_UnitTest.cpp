@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(CARTIDGE_BASE_Suite)
 
 BOOST_AUTO_TEST_CASE(CartidgeBuilderTest)
 {
-	char* PATH = "C:/Users/Juan/Documents/JMLGameboy/JMLGameboy/ROMs/game.gb";
+	char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/game.gb";
 	Cartidge* cartidge = CartidgeBuilder().Build(PATH);
 
 	BOOST_CHECK(cartidge != NULL);

@@ -22,7 +22,6 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include "CPU.h"
 #include "../../Tools/Console.h"
 #include <stdexcept>
-//#include <Windows.h>
 
 #ifdef DEBUGGER_ON
 #include <ctime>
@@ -65,7 +64,11 @@ CPU::CPU()
 
 void CPU::Reset()
 {
-#ifndef UNIT_TEST_ON
+
+#ifdef UNIT_TEST_ON
+	PC = 0x0000;
+	AF.l = 0x00;
+#else
 #if BOOTSTRAP_ENABLED
 	PC = 0x0000;
 #else
@@ -75,9 +78,7 @@ void CPU::Reset()
 	DE.w = 0x00D8;
 	HL.w = 0x014D;
 	IF = 0xE1;
-#endif
-#else
-	PC == 0x0000;
+#endif	
 #endif
 	//IE = ???
 	SP.w = 0xFFFE;
@@ -90,7 +91,7 @@ void CPU::Reset()
 
 CPU::~CPU()
 {
-	WriteLineE("CPU Destructor");
+	//WriteLineE("CPU Destructor");
 }
 
 
@@ -137,15 +138,6 @@ BYTE CPU::RunCycle()
 	//FETCH
 	if(!haltMode)
 	{
-		if(emulationCycleCount == 299462)
-		{
-			int b = 0;
-		}
-
-		
-		//WriteLineE("0x%04x", PC);
-
-		//WriteLineE("%#04x", PC);
 		opcode = MemoryController::Shared()->ReadMemory(PC);
 
 		//DECODE & EXCECUTE
@@ -461,6 +453,57 @@ void CPU::Sub8AndChangeFlags(BYTE& dest, const BYTE& s)
 	}
 	//Set N
 	SetN();
+}
+
+void CPU::AddSigned8To16AndChangeFlags(WORD& dest, const char& s)
+{
+	ResetZ();
+	ResetN();
+
+	if(s >= 0)
+	{
+		//Set CY
+		if(0xFFFF - dest < s)
+		{
+			SetCY();
+		}
+		else
+		{
+			ResetCY();
+		}
+
+		//Set H
+		if((dest & 0x0FFF) + s > 0x0FFF)
+		{
+			SetH();
+		}
+		else
+		{
+			ResetH();
+		}
+	}
+	else
+	{
+		if(dest < -s)
+		{
+			SetCY();
+		}
+		else
+		{
+			ResetCY();
+		}
+
+		if((dest & 0xFFF) < -s)
+		{
+			SetH();
+		}
+		else
+		{
+			ResetH();
+		}
+	}
+
+	dest += s;
 }
 
 //REGISTER FROM CODES
@@ -879,6 +922,9 @@ unsigned char CPU::POP_qq()
 	reg_val.h = h;
 	reg_val.l = l;
 	
+	// F Lower nibble must remain Zero
+	AF.l &= 0xF0;
+
 	SP.w += 2;
 	PC += 1;
 
@@ -886,34 +932,16 @@ unsigned char CPU::POP_qq()
 
 }
 
-unsigned char CPU::LDHL_PS_e()
+unsigned char CPU::LDHL_SP_e()
 {
 	// 11 111 000
 	// The 8-Bits operand e is added to SP and the result is stored in HL
-	BYTE e = MemoryController::Shared()->ReadMemory(PC + 1);
 	
-	ResetZ();
-	ResetN();
-
-	if((SP.w & 0x000F) + (e & 0x0F) > 0x0F)
-	{
-		SetH();
-	}
-	else
-	{
-		ResetH();
-	}
-
-	if((SP.w & 0x00FF) + e > 0xFF)
-	{
-		SetCY();
-	}
-	else
-	{
-		ResetCY();
-	}
-
-	HL.w = SP.w + e;
+	// char beacuse it must be signed
+	char e = MemoryController::Shared()->ReadMemory(PC + 1);
+	
+	HL.w = SP.w;
+	AddSigned8To16AndChangeFlags(HL.w, e);
 
 	PC += 2;
 
@@ -1019,7 +1047,9 @@ unsigned char CPU::ADC_A_$HL()
 	// 10 001 110
 	// Adds the contents of operand (HL) and CY to the contents of register A and stores the results in register A.
 	BYTE n = MemoryController::Shared()->ReadMemory(HL.w);
-	Add8AndChangeFlags(AF.h, n + GetCY());
+	BYTE carry = GetCY();
+
+	Add8AndChangeFlags(AF.h, n + carry);
 	PC += 1;
 
 	return 2;
@@ -1603,9 +1633,7 @@ unsigned char CPU::ADD_SP_e()
 	//11 101 000
 	// Adds the contents of the 8-Bits immediate operand e and SP and stores the results in SP
 	BYTE e = MemoryController::Shared()->ReadMemory(PC + 1);
-	Add16AndChangeFlags(SP.w, e);
-
-	ResetZ();
+	AddSigned8To16AndChangeFlags(SP.w, e);
 
 	PC += 2;
 
@@ -2382,7 +2410,7 @@ unsigned char CPU::BIT_b_r()
 
 	BYTE bit = (r << b) & 0x80;
 
-	if(bit == 0x00)
+	if(bit == 0x80)
 	{
 		SetZ();
 	}
@@ -3110,7 +3138,7 @@ unsigned char CPU::STOP()
 
 	stopMode = true;
 
-	PC += 1;
+	PC += 2;
 
 	return 1;
 
@@ -3387,7 +3415,7 @@ void CPU::LoadInstructions()
 	instructions[0xF5]	=	&CPU::PUSH_qq;
 	instructions[0xF6]	=	&CPU::OR_A_n;
 	instructions[0xF7]	=	&CPU::RST_t;
-	instructions[0xF8]	=	&CPU::LDHL_PS_e;
+	instructions[0xF8]	=	&CPU::LDHL_SP_e;
 	instructions[0xF9]	=	&CPU::LD_SP_HL;
 	instructions[0xFA]	=	&CPU::LD_A_$nn;
 	instructions[0xFB]	=	&CPU::EI;
@@ -3669,4 +3697,4 @@ void CPU::LoadInstructions()
 	cbInstructions[0xFD]	=	&CPU::SET_b_r;
 	cbInstructions[0xFE]	=	&CPU::SET_b_$HL;
 	cbInstructions[0xFF]	=	&CPU::SET_b_r;
-}
+};

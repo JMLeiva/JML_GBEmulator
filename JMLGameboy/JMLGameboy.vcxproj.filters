@@ -39,6 +39,21 @@
     <Filter Include="Source Files\Core\Input">
       <UniqueIdentifier>{108c0c70-36c6-46ae-a8db-dbebcdb2f895}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tools\Debugger">
+      <UniqueIdentifier>{3c655bbe-30ca-44c8-a6b7-ab65fb487907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tools\Debugger\UI">
+      <UniqueIdentifier>{a9149c80-2b22-4308-a973-3b7d3c0c4c9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MocFiles">
+      <UniqueIdentifier>{345cd486-a083-48e1-8ae1-e885de65828a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tools\Debugger\ViewModel">
+      <UniqueIdentifier>{035fcfdc-953b-4b84-9610-20d8fa780f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tools\Disassembler">
+      <UniqueIdentifier>{36b9b4b9-7815-45cb-bd61-1e742e7f37a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -82,6 +97,42 @@
     </ClCompile>
     <ClCompile Include="src\Core\Input\Joypad.cpp">
       <Filter>Source Files\Core\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\Debugger.cpp">
+      <Filter>Source Files\Tools\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\UI\DebuggerMainWindow.cpp">
+      <Filter>Source Files\Tools\Debugger\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MocFiles\moc_DebuggerMainWindow.cpp">
+      <Filter>Source Files\MocFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\ViewModel\CPURegistersItemModel.cpp">
+      <Filter>Source Files\Tools\Debugger\ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\ViewModel\DisassemblerStringListModel.cpp">
+      <Filter>Source Files\Tools\Debugger\ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Disassembler\Disassembler.cpp">
+      <Filter>Source Files\Tools\Disassembler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\ViewModel\InputRegistersItemModel.cpp">
+      <Filter>Source Files\Tools\Debugger\ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\Globals.cpp">
+      <Filter>Source Files\Tools\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Debugger\DebuggerTools.cpp">
+      <Filter>Source Files\Tools\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Disassembler\DisassemblerInstruction.cpp">
+      <Filter>Source Files\Tools\Disassembler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Disassembler\DisassemblerInstructionTable.cpp">
+      <Filter>Source Files\Tools\Disassembler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tools\Disassembler\Mnemonics.cpp">
+      <Filter>Source Files\Tools\Disassembler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +180,39 @@
     </ClInclude>
     <ClInclude Include="src\Core\Input\Joypad.h">
       <Filter>Source Files\Core\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\Debugger.h">
+      <Filter>Source Files\Tools\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\UI\DebuggerMainWindow.h">
+      <Filter>Source Files\Tools\Debugger\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\ViewModel\CPURegistersItemModel.h">
+      <Filter>Source Files\Tools\Debugger\ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\Globals.h">
+      <Filter>Source Files\Tools\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\DebuggerTools.h">
+      <Filter>Source Files\Tools\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\ViewModel\DissasemblerStringListModel.h">
+      <Filter>Source Files\Tools\Debugger\ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Disassembler\Disassembler.h">
+      <Filter>Source Files\Tools\Disassembler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Debugger\ViewModel\InputRegistersItemModel.h">
+      <Filter>Source Files\Tools\Debugger\ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Disassembler\DisassemblerInstruction.h">
+      <Filter>Source Files\Tools\Disassembler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Disassembler\DisassemblerInstructionTable.h">
+      <Filter>Source Files\Tools\Disassembler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tools\Disassembler\Mnemonics.h">
+      <Filter>Source Files\Tools\Disassembler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

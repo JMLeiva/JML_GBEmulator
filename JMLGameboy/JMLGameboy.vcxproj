@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MocFiles\moc_DebuggerMainWindow.cpp" />
     <ClCompile Include="src\Core\Cartidge\Cartidge.cpp" />
     <ClCompile Include="src\Core\Cartidge\CartidgeBuilder.cpp" />
     <ClCompile Include="src\Core\Cartidge\CartidgeMBC1.cpp" />
@@ -25,6 +26,17 @@
     <ClCompile Include="src\Core\Timer\Timer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Tools\Console.cpp" />
+    <ClCompile Include="src\Tools\Debugger\Debugger.cpp" />
+    <ClCompile Include="src\Tools\Debugger\DebuggerTools.cpp" />
+    <ClCompile Include="src\Tools\Debugger\Globals.cpp" />
+    <ClCompile Include="src\Tools\Debugger\UI\DebuggerMainWindow.cpp" />
+    <ClCompile Include="src\Tools\Debugger\ViewModel\CPURegistersItemModel.cpp" />
+    <ClCompile Include="src\Tools\Debugger\ViewModel\DisassemblerStringListModel.cpp" />
+    <ClCompile Include="src\Tools\Debugger\ViewModel\InputRegistersItemModel.cpp" />
+    <ClCompile Include="src\Tools\Disassembler\Disassembler.cpp" />
+    <ClCompile Include="src\Tools\Disassembler\DisassemblerInstruction.cpp" />
+    <ClCompile Include="src\Tools\Disassembler\DisassemblerInstructionTable.cpp" />
+    <ClCompile Include="src\Tools\Disassembler\Mnemonics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Cartidge\Cartidge.h" />
@@ -42,6 +54,17 @@
     <ClInclude Include="src\Metadata\Configuration.h" />
     <ClInclude Include="src\Metadata\DataTypes.h" />
     <ClInclude Include="src\Tools\Console.h" />
+    <ClInclude Include="src\Tools\Debugger\Debugger.h" />
+    <ClInclude Include="src\Tools\Debugger\DebuggerTools.h" />
+    <ClInclude Include="src\Tools\Debugger\Globals.h" />
+    <ClInclude Include="src\Tools\Debugger\UI\DebuggerMainWindow.h" />
+    <ClInclude Include="src\Tools\Debugger\ViewModel\CPURegistersItemModel.h" />
+    <ClInclude Include="src\Tools\Debugger\ViewModel\DissasemblerStringListModel.h" />
+    <ClInclude Include="src\Tools\Debugger\ViewModel\InputRegistersItemModel.h" />
+    <ClInclude Include="src\Tools\Disassembler\Disassembler.h" />
+    <ClInclude Include="src\Tools\Disassembler\DisassemblerInstruction.h" />
+    <ClInclude Include="src\Tools\Disassembler\DisassemblerInstructionTable.h" />
+    <ClInclude Include="src\Tools\Disassembler\Mnemonics.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2CC7277D-95E6-41F8-91FA-6A9B7E4C2BA2}</ProjectGuid>
@@ -49,13 +72,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -78,12 +101,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Libraries\SFML-2.2\include;C:\Libraries\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Libraries\SFML-2.2\include;C:\Libraries\Qt\5.5\msvc2013\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Libraries\SFML-2.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-network-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Libraries\SFML-2.2\lib;C:\Libraries\Qt\5.5\msvc2013\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-network-d.lib;sfml-system-d.lib;sfml-window-d.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5UiToolsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,14 +117,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Libraries\SFML-2.2\include;C:\Libraries\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Libraries\SFML-2.2\include;C:\Libraries\Qt\5.5\msvc2013\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Libraries\SFML-2.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Libraries\SFML-2.2\lib;C:\Libraries\Qt\5.5\msvc2013\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5UiTools.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -24,9 +24,11 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include "../Memory/MemoryElement.h"
 #include "../../Metadata/Configuration.h"
 
-#ifndef UNIT_TEST_ON
+//#ifndef UNIT_TEST_ON
 #include <SFML\Window\Event.hpp>
-#endif
+//#endif
+
+
 
 enum P_MASK
 {

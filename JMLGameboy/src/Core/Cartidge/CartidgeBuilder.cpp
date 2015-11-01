@@ -333,7 +333,7 @@ bool CartidgeBuilder::SetRomSize(const char* header, Cartidge* cartidge)
 	switch(romBanksNumberCode)
 	{
 	case ROMBankSize::SIZE_1:
-		romBanksNumber = 1;
+		romBanksNumber = 2;
 		WriteLineI("ROM Bank Size: 1 (No Rom Banking), 32 KByte");
 		break;
 	case ROMBankSize::SIZE_4:
@@ -345,35 +345,35 @@ bool CartidgeBuilder::SetRomSize(const char* header, Cartidge* cartidge)
 		WriteLineI("ROM Bank Size: 8, 128 KByte");
 		break;
 	case ROMBankSize::SIZE_16:
-		romBanksNumber = 1;
+		romBanksNumber = 16;
 		WriteLineI("ROM Bank Size: 16, 256 KByte");
 		break;
 	case ROMBankSize::SIZE_32:
-		romBanksNumber = 1;
+		romBanksNumber = 32;
 		WriteLineI("ROM Bank Size: 32, 512 KByte");
 		break;
 	case ROMBankSize::SIZE_64:
-		romBanksNumber = 1;
+		romBanksNumber = 64;
 		WriteLineI("ROM Bank Size: 64, 1 MByte");
 		break;
 	case ROMBankSize::SIZE_128:
-		romBanksNumber = 1;
+		romBanksNumber = 128;
 		WriteLineI("ROM Bank Size: 128, 2 MByte");
 		break;
 	case ROMBankSize::SIZE_256:
-		romBanksNumber = 1;
+		romBanksNumber = 256;
 		WriteLineI("ROM Bank Size: 256, 4 MByte");
 		break;
 	case ROMBankSize::SIZE_72:
-		romBanksNumber = 1;
+		romBanksNumber = 72;
 		WriteLineI("ROM Bank Size: 72, 1.1 MByte");
 		break;
 	case ROMBankSize::SIZE_80:
-		romBanksNumber = 1;
+		romBanksNumber = 80;
 		WriteLineI("ROM Bank Size: 80, 1.2 MByte");
 		break;
 	case ROMBankSize::SIZE_96:
-		romBanksNumber = 1;
+		romBanksNumber = 96;
 		WriteLineI("ROM Bank Size: 96, 1.5 MByte");
 		break;
 	default:
@@ -441,7 +441,7 @@ bool CartidgeBuilder::GetCBGFlag(const char* header, Cartidge* cartidge)
 	case CBGFlag::CBG_COMPATIBLE:
 		cartidge->cbgFlag = CBGFlag::CBG_COMPATIBLE;
 		WriteLineI("CBG COMPATIBLE -> NOT SUPPORTED YET");
-		return false;
+		//return false;
 		break;
 	case CBGFlag::CBG_EXCLUSIVE:
 		cartidge->cbgFlag = CBGFlag::CBG_EXCLUSIVE;
@@ -472,7 +472,7 @@ bool CartidgeBuilder::GetSBGFlag(const char* header, Cartidge* cartidge)
 	case SBGFlag::SGB_SUPPORTED:
 		cartidge->sbgFlag = SBGFlag::SGB_SUPPORTED;
 		WriteLineI("SBG SUPPORTED -> NOT SUPPORTED YET");
-		return false;
+		//return false;
 		break;
 	default:
 		WriteLineI("UNKNOWN SBG FLAG %#x", sbgCode);

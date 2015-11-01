@@ -48,6 +48,8 @@ enum INTERRUPT_ADDRESS
 
 class CPU : public MemoryElement
 {
+	friend class CPURegistersItemModel;
+	friend class DisassemblerStringListModel;
 public:
 	CPU();
 	~CPU();
@@ -136,8 +138,9 @@ private:
 	//Operations With That Affects Flags
 	void Add8AndChangeFlags(BYTE& dest, const BYTE& s);
 	void Add16AndChangeFlags(WORD& dest, const WORD& s);
-
 	void Sub8AndChangeFlags(BYTE& dest, const BYTE& s);
+
+	void AddSigned8To16AndChangeFlags(WORD& dest, const char& s);
 
 	//INSTRUCTIONS TABLES
 	typedef unsigned char(CPU::*Instruction)(void);
@@ -230,7 +233,7 @@ private:
 	//unsigned char POP_BC();	unsigned char POP_DE();	unsigned char POP_HL();	unsigned char POP_AF();
 
 	//LDHL SP, e
-	unsigned char LDHL_PS_e();
+	unsigned char LDHL_SP_e();
 
 	//LD (nn), SP
 	unsigned char LD_$nn_SP();

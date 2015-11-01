@@ -27,10 +27,10 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #define TMA_ADDRESS		0xFF06
 #define TAC_ADDRESS		0xFF07
 
-#define SPEED_4K	4096
-#define SPEED_262K	262144
-#define SPEED_65K	65536
-#define SPEED_16K	16384
+#define SPEED_4K	1024;	//2^10
+#define SPEED_262K	16;		//2^4
+#define SPEED_65K	64;		//2^6 
+#define SPEED_16K	256;	//2^8
 
 #define DIV_MIN		256
 
@@ -76,16 +76,16 @@ bool Timer::Write(const WORD &address, const BYTE &value)
 		switch(speedCode)
 		{
 		case TimerSpeed::TS_4K:
-			cyclesOverflow = CPU::TARGET_CPU_SPEED / SPEED_4K;
+			cyclesOverflow = SPEED_4K;
 			break;
 		case TimerSpeed::TS_16K:
-			cyclesOverflow = CPU::TARGET_CPU_SPEED / SPEED_16K;
+			cyclesOverflow = SPEED_16K;
 			break;
 		case TimerSpeed::TS_65K:
-			cyclesOverflow = CPU::TARGET_CPU_SPEED / SPEED_65K;
+			cyclesOverflow = SPEED_65K;
 			break;
 		case TimerSpeed::TS_262K:
-			cyclesOverflow = CPU::TARGET_CPU_SPEED / SPEED_262K;
+			cyclesOverflow = SPEED_262K;
 			break;
 		}
 

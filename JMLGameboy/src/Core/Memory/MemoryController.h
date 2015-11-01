@@ -19,7 +19,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef JML_MOMORY_CONTROLLER
+#ifndef JML_MEMORY_CONTROLLER
 #define JML_MEMORY_CONTROLLER
 
 #include "MemoryElement.h"
@@ -66,4 +66,4 @@ private:
 	MemoryController();
 };
 
-#endif JML_MEMORY_ADDRESS
+#endif //JML_MEMORY_ADDRESS

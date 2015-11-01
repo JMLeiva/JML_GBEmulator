@@ -20,6 +20,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "WorkingRAM.h"
+#include "../../Tools/Console.h"
 
 #define WORKING_RAM_START_ADDRESS 0xC000
 #define WORKING_RAM_END_ADDRESS 0xE000

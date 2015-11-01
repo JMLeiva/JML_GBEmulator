@@ -20,6 +20,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Metadata\Configuration.h"
+#include "Tools\Debugger\Debugger.h"
 
 #include "Core\Cartidge\Cartidge.h"
 #include "Core\Cartidge\CartidgeBuilder.h"
@@ -29,11 +30,14 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include "Core\Memory\WorkingRAM.h"
 #include "Core\Sound\SoundEngine.h"
 #include "Core\Input\Joypad.h"
+#include <thread>
 
 #ifndef UNIT_TEST_ON
 
 char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/Super Mario Land.gb";
-//char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/game_4_OBJ16.gb";
+//char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/Tests/02-interrupts.gb";
+//char* PATH = "C:/Users/Juan/Documents/C++/JML_GBEmulator/ROMs/Tests/cpu_instrs.gb";
+
 
 #define SFML_POLL_INTERVAL			100
 
@@ -63,6 +67,15 @@ void UpdateEvents(Joypad* joypad)
 #endif
 }
 
+#ifdef DEBUGGER_ON
+Debugger debugger;
+
+void runDebugger(CPU* cpu, int argc, char **argv)
+{
+	debugger.Initialize(cpu, argc, argv);
+}
+#endif
+
 int main(int argc, char** argv)
 {
 	Cartidge* cartidge = CartidgeBuilder().Build(PATH);
@@ -91,8 +104,18 @@ int main(int argc, char** argv)
 
 	int ownerId = cpu->GetOwnershipId();
 
+#ifdef DEBUGGER_ON
+	//Thread?
+	std::thread thread(runDebugger, cpu, argc, argv);
+#endif
+
 	for (;;)
 	{
+
+#ifdef DEBUGGER_ON
+		debugger.Update();
+#endif
+
 		BYTE cyclesCount = cpu->RunCycle(ownerId);
 		timer->RunCycle(cyclesCount);
 		gpu->RunCycle(cyclesCount);

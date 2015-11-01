@@ -28,6 +28,12 @@
     <Filter Include="Source Files\Core\Graphics">
       <UniqueIdentifier>{540100a0-0468-4906-89b5-7d274de1b992}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tools">
+      <UniqueIdentifier>{31a2d6e4-0a50-45af-ac60-28883d7d3f26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tools\Disassembler">
+      <UniqueIdentifier>{19399848-25be-4375-91ca-0d260ed7e631}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -67,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="Core\Graphics\GPUExcecution_UnitTest.cpp">
       <Filter>Source Files\Core\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Disassembler\DisassemblerInstructionTable_UnitTest.cpp">
+      <Filter>Source Files\Tools\Disassembler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

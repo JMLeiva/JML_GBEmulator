@@ -52,6 +52,7 @@ bool CartidgeMBC1::Write(const WORD &address, const BYTE &value)
 	if(address >= ROM_BANK_SELECTION_START_ADDRESS && address < ROM_BANK_SELECTION_END_ADDRESS)
 	{
 		currentBank = value;
+		//WriteLineE("Current Bank: %d", currentBank);
 		return true;
 	}
 

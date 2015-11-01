@@ -58,7 +58,7 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #define V_BLACK_LINE_START			144
 #define V_BLACK_LINE_END			154
 
-#define SCREEN_DOT_SIZE		4
+#define SCREEN_DOT_SIZE		1
 #define SCREEN_RES_WIDTH	160
 #define SCREEN_RES_HEIGHT	144
 
@@ -433,11 +433,6 @@ void GPU::RenderOBJLine()
 			WORD characterAddress = object.CHAR_CODE * 16;
 			BYTE yCharLine = LY - objectRealYPos;
 
-			if(i == 2)
-			{
-				int a  = 0;
-			}
-
 			BYTE realYCharLine = object.FlipY() ? (bigObjects ? 15 - yCharLine : 7 - yCharLine) : yCharLine;
 
 			BYTE line0 = characterRam[characterAddress + realYCharLine * 2];
@@ -447,6 +442,10 @@ void GPU::RenderOBJLine()
 			bool underBG = object.UnderBG();
 			bool flipX = object.FlipX();
 			
+			if(flipX)
+			{
+				int a = 0;
+			}
 
 			BYTE palette = object.Palette1() ? OBP1 : OBP0;
 

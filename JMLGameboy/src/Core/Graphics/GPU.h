@@ -26,9 +26,9 @@ along with JML_GBEmulator.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../Metadata/Configuration.h"
 #include "../CPU/CPU.h"
 
-#ifndef UNIT_TEST_ON
+//#ifndef UNIT_TEST_ON
 #include <SFML\Graphics.hpp>
-#endif
+//#endif
 
 enum GPUState
 {
@@ -81,14 +81,17 @@ public:
 
 	void RunCycle(int cycleCount);
 
-#ifndef UNIT_TEST_ON
+//#ifndef UNIT_TEST_ON
 	sf::RenderWindow* GetWindow(){return window; };
-#endif
+//#endif
 
 #ifndef UNIT_TEST_ON
 private:
-	sf::Color PALETTE_COLORS[4];
 #endif
+
+//#ifndef UNIT_TEST_ON
+	sf::Color PALETTE_COLORS[4];
+//#endif
 
 	unsigned int gpuCycles;
 
@@ -154,12 +157,12 @@ private:
 
 	//SFML
 
-#ifndef UNIT_TEST_ON
+//#ifndef UNIT_TEST_ON
 	sf::RenderWindow* window;
 	sf::Image image;
 	sf::Texture texture;
 	sf::Sprite sprite;
-#endif
+//#endif
 
 };
 
